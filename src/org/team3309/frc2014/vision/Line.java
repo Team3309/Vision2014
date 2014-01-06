@@ -44,7 +44,7 @@ public class Line {
     }
 
     public boolean isHorizontal(double threshold) {
-        return Math.abs(getAngle()) < threshold;
+        return Math.abs(getAngle() % 180) < threshold;
     }
 
     public boolean isVertical() {
@@ -52,11 +52,23 @@ public class Line {
     }
 
     public boolean isVertical(double threshold) {
-        return Math.abs(Math.abs(getAngle()) - 90) < threshold;
+        return Math.abs(Math.abs(getAngle() % 180) - 90) < threshold;
     }
 
     public double length() {
-        return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+        return Util.distance(p1, p2);
+    }
+
+    public Point center() {
+        return new Point((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
+    }
+
+    public double distance(Line other) {
+        return Util.distance(center(), other.center());
+    }
+
+    public String toString() {
+        return p1.toString() + " -> " + p2.toString();
     }
 
 }
