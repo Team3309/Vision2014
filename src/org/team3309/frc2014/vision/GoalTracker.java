@@ -69,11 +69,46 @@ public class GoalTracker {
         int colorIndex = 0;
         for (MatOfPoint contour : contours) {
             Point[] points = contour.toArray();
+            System.out.println("Contour " + colorIndex + " has " + points.length + " points");
             for (int i = 0; i < points.length - 1; i++) {
                 Core.line(img, points[i], points[i + 1], colors[colorIndex % colors.length], 5);
             }
             colorIndex++;
         }
+    }
+
+    private static void drawContour(MatOfPoint contour, Mat img) {
+        Point[] points = contour.toArray();
+        for (int i = 0; i < points.length - 1; i++) {
+            Core.line(img, points[i], points[i + 1], new Scalar(255, 255, 255), 5);
+        }
+    }
+
+    private static List<Line> getLines(MatOfPoint matOfPoint) {
+        MatOfPoint2f points2f = new MatOfPoint2f(matOfPoint.toArray());
+
+        MatOfPoint2f approx = new MatOfPoint2f();
+        Imgproc.approxPolyDP(points2f, approx, 10, true);
+
+        Point[] points = approx.toArray();
+        ArrayList<Line> lines = new ArrayList<Line>();
+        for (int i = 0; i < points.length - 1; i++) {
+            Line l = new Line(points[i], points[i + 1]);
+            lines.add(l);
+        }
+
+        return lines;
+    }
+
+    private static void drawLine(Mat img, Line line, int thickness, Scalar color) {
+        Core.line(img, line.getP1(), line.getP2(), color, thickness);
+    }
+
+    private static void drawGoal(Mat img, Goal goal) {
+        Scalar color = goal.isLeft() ? new Scalar(0, 255, 0) : new Scalar(0, 0, 255);
+        drawLine(img, goal.getTop(), 5, color);
+        drawLine(img, goal.getBottom(), 5, color);
+        drawLine(img, goal.getSide(), 5, color);
     }
 
     public static Goal findGoal(Mat img, CalibrationWindow window) {
@@ -85,8 +120,27 @@ public class GoalTracker {
         erodeAndDilate(bin, window);
 
         List<MatOfPoint> contours = findContours(bin);
-        drawContours(contours, img);
-        System.out.println("Found " + contours.size() + " contours");
+
+        //drawContours(contours, img);
+        drawContour(contours.get(0), img);
+
+        for (MatOfPoint contour : contours) {
+            List<Line> lines = getLines(contour);
+
+            for (Line l : lines) {
+                //drawLine(img, l, 5, new Scalar(255, 255, 0));
+            }
+
+            for (int i = 1; i < lines.size(); i++) {
+                lines.remove(i);
+            }
+            for (Line line : lines) {
+                drawLine(img, line, 5, new Scalar(255, 0, 0));
+            }
+            Goal goal = Goal.getGoal(lines);
+            drawGoal(img, goal);
+            System.out.println(goal);
+        }
 
         window.showResult(img);
 

@@ -13,6 +13,9 @@ public class VisionConfig {
         return instance;
     }
 
+    private int imageWidth = 640;
+    private int imageHeight = 480;
+
     private int hueMin = 0;
     private int hueMax = 255;
     private int satMin = 0;
@@ -93,5 +96,21 @@ public class VisionConfig {
 
     public void setDilationSize(int dilationSize) {
         this.dilationSize = dilationSize;
+    }
+
+    public int getImageWidth() {
+        return imageWidth;
+    }
+
+    public void setImageWidth(int imageWidth) {
+        this.imageWidth = imageWidth;
+    }
+
+    public int getImageHeight() {
+        return imageHeight;
+    }
+
+    public void setImageHeight(int imageHeight) {
+        this.imageHeight = imageHeight;
     }
 }
