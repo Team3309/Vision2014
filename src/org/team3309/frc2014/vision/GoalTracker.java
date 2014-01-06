@@ -101,7 +101,8 @@ public class GoalTracker {
     }
 
     private static void drawLine(Mat img, Line line, int thickness, Scalar color) {
-        Core.line(img, line.getP1(), line.getP2(), color, thickness);
+        if (line != null)
+            Core.line(img, line.getP1(), line.getP2(), color, thickness);
     }
 
     private static void drawGoal(Mat img, Goal goal) {
@@ -120,25 +121,24 @@ public class GoalTracker {
         erodeAndDilate(bin, window);
 
         List<MatOfPoint> contours = findContours(bin);
+        System.out.println("Found " + contours.size() + " contours");
 
         //drawContours(contours, img);
-        drawContour(contours.get(0), img);
+        //drawContour(contours.get(1), img);
 
         for (MatOfPoint contour : contours) {
             List<Line> lines = getLines(contour);
 
-            for (Line l : lines) {
-                //drawLine(img, l, 5, new Scalar(255, 255, 0));
-            }
-
             for (int i = 1; i < lines.size(); i++) {
                 lines.remove(i);
             }
-            for (Line line : lines) {
-                drawLine(img, line, 5, new Scalar(255, 0, 0));
+
+            for (Line l : lines) {
+                drawLine(img, l, 5, new Scalar(255, 255, 0));
             }
+
             Goal goal = Goal.getGoal(lines);
-            drawGoal(img, goal);
+            //drawGoal(img, goal);
             System.out.println(goal);
         }
 

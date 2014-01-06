@@ -20,10 +20,10 @@ public class VisionConfig {
     private int hueMax = 255;
     private int satMin = 0;
     private int satMax = 255;
-    private int valMin = 185;
+    private int valMin = 140;
     private int valMax = 255;
 
-    private int erosionSize = 3;
+    private int erosionSize = 2;
     private int dilationSize = 0;
 
     private VisionConfig() {

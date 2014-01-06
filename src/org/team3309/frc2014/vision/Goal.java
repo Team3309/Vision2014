@@ -23,8 +23,10 @@ public class Goal {
     private Line top, bottom, side;
 
     public static Goal getGoal(List<Line> lines) {
-        if (lines.size() < 3)
+        if (lines.size() < 3) {
+            System.err.println("Less than 3 lines, no valid goal");
             return null;
+        }
         Line top = null, bottom = null, side = null;
         for (Line l : lines) {
             if (l.isHorizontal()) {
@@ -60,6 +62,8 @@ public class Goal {
     }
 
     public Fill getFill() {
+        if (side == null || top == null || bottom == null)
+            return Fill.ERROR;
         double ratio = top.length() / side.length();
         if (Math.abs(ratio - ratioOneThird) < Math.abs(ratio - ratioTwoThirds) && Math.abs(ratio - ratioOneThird) < Math.abs(ratio - ratioFull)) {
             return Fill.ONE_THIRD;
@@ -78,6 +82,8 @@ public class Goal {
     }
 
     public boolean isRight() {
+        if (side == null || top == null || bottom == null)
+            return false;
         return (side.getAverageX() < top.getAverageX() && side.getAverageX() < bottom.getAverageX());
     }
 
