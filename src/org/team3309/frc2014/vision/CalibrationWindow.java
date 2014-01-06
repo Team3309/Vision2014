@@ -46,6 +46,7 @@ public class CalibrationWindow extends JFrame implements SliderListener {
 
         c.weightx = .33;
         c.weighty = .5;
+        c.anchor = GridBagConstraints.NORTH;
 
         c.ipadx = 20;
         c.ipady = 10;
