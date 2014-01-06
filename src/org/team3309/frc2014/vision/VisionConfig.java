@@ -16,15 +16,17 @@ public class VisionConfig {
     private int imageWidth = 640;
     private int imageHeight = 480;
 
-    private int hueMin = 0;
-    private int hueMax = 255;
-    private int satMin = 0;
+    private int hueMin = 66;
+    private int hueMax = 91;
+    private int satMin = 161;
     private int satMax = 255;
-    private int valMin = 140;
+    private int valMin = 109;
     private int valMax = 255;
 
     private int erosionSize = 2;
-    private int dilationSize = 0;
+    private int dilationSize = 1;
+
+    private double verticalFov = 37.4;
 
     private VisionConfig() {
 
@@ -112,5 +114,13 @@ public class VisionConfig {
 
     public void setImageHeight(int imageHeight) {
         this.imageHeight = imageHeight;
+    }
+
+    public double getVerticalFov() {
+        return verticalFov;
+    }
+
+    public void setVerticalFov(double verticalFov) {
+        this.verticalFov = verticalFov;
     }
 }
