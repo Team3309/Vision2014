@@ -63,6 +63,22 @@ public class Line {
         return new Point((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
     }
 
+    public Point getLeft() {
+        return p1.x < p2.x ? p1 : p2;
+    }
+
+    public Point getRight() {
+        return p1.x > p2.x ? p1 : p2;
+    }
+
+    public Point getTop() {
+        return p1.y < p2.y ? p1 : p2;
+    }
+
+    public Point getBottom() {
+        return p1.y > p2.y ? p1 : p2;
+    }
+
     public double distance(Line other) {
         return Util.distance(center(), other.center());
     }

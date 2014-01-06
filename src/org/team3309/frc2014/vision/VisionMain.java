@@ -51,6 +51,7 @@ public class VisionMain implements SliderListener {
         c.setErosionSize(w.getErosionSize());
         c.setDilationSize(w.getDilationSize());
 
-        GoalTracker.findGoal(Highgui.imread(imageName), w);
+        //GoalTracker.findGoal(Highgui.imread(imageName), w);
+        GoalTracker.findTarget(Highgui.imread(imageName), w);
     }
 }

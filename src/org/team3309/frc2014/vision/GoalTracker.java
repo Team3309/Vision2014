@@ -112,6 +112,14 @@ public class GoalTracker {
         drawLine(img, goal.getSide(), 5, color);
     }
 
+    private static void drawTarget(Mat img, VisionTarget target) {
+        Scalar color = target.isLeft() ? new Scalar(0, 255, 0) : new Scalar(0, 0, 255);
+        int thickness = target.isHot() ? 10 : 5;
+        drawLine(img, target.getVertical(), thickness, color);
+        if (target.getHorizontal() != null)
+            drawLine(img, target.getHorizontal(), thickness, color);
+    }
+
     public static Goal findGoal(Mat img, CalibrationWindow window) {
         Mat hsv = new Mat(img.size(), CvType.CV_8UC3);
         Imgproc.cvtColor(img, hsv, Imgproc.COLOR_BGR2HSV);
@@ -123,23 +131,93 @@ public class GoalTracker {
         List<MatOfPoint> contours = findContours(bin);
         System.out.println("Found " + contours.size() + " contours");
 
-        //drawContours(contours, img);
-        //drawContour(contours.get(1), img);
+        ArrayList<Line> hLines = new ArrayList<Line>();
+        ArrayList<Line> vLines = new ArrayList<Line>();
 
         for (MatOfPoint contour : contours) {
             List<Line> lines = getLines(contour);
-
-            for (int i = 1; i < lines.size(); i++) {
-                lines.remove(i);
-            }
-
             for (Line l : lines) {
-                drawLine(img, l, 5, new Scalar(255, 255, 0));
+                if (l.isHorizontal())
+                    hLines.add(l);
+                if (l.isVertical())
+                    vLines.add(l);
             }
+        }
 
-            Goal goal = Goal.getGoal(lines);
-            //drawGoal(img, goal);
-            System.out.println(goal);
+        System.out.printf("Found %d horizontal lines\n", hLines.size());
+        System.out.printf("Found %d vertical lines", vLines.size());
+
+        for (Line l : hLines) {
+            drawLine(img, l, 5, new Scalar(0, 0, 255));
+        }
+        for (Line l : vLines) {
+            drawLine(img, l, 5, new Scalar(255, 0, 0));
+        }
+
+        window.showResult(img);
+
+        return null;
+    }
+
+    public static VisionTarget findTarget(Mat img, CalibrationWindow window) {
+        Mat hsv = new Mat(img.size(), CvType.CV_8UC3);
+        Imgproc.cvtColor(img, hsv, Imgproc.COLOR_BGR2HSV);
+        Mat bin = threshold(hsv, window);
+        window.showThreshold(bin.clone());
+
+        erodeAndDilate(bin, window);
+
+        List<MatOfPoint> contours = findContours(bin);
+        System.out.println("Found " + contours.size() + " contours");
+
+        ArrayList<Line> hLines = new ArrayList<Line>();
+        ArrayList<Line> vLines = new ArrayList<Line>();
+
+        for (MatOfPoint contour : contours) {
+            List<Line> lines = getLines(contour);
+            for (Line l : lines) {
+                if (l.isHorizontal())
+                    hLines.add(l);
+                if (l.isVertical())
+                    vLines.add(l);
+            }
+        }
+
+        System.out.printf("Found %d horizontal lines\n", hLines.size());
+        System.out.printf("Found %d vertical lines\n", vLines.size());
+
+        for (Line l : hLines) {
+            drawLine(img, l, 5, new Scalar(255, 0, 0));
+        }
+        for (Line l : vLines) {
+            drawLine(img, l, 5, new Scalar(0, 255, 0));
+        }
+
+        for (Line vline : vLines) {
+            Line closestH = null;
+            for (Line hline : hLines) {
+                if (closestH != null) {
+                    if (hline.distance(vline) < closestH.distance(vline))
+                        closestH = hline;
+                } else {
+                    closestH = hline;
+                }
+            }
+            System.out.println(vline + " closest to " + closestH);
+
+            ArrayList<Line> targetLines = new ArrayList<Line>();
+            targetLines.add(vline);
+            if (closestH != null && Util.distance(closestH.getLeft(), vline.getTop()) < 50) {
+                targetLines.add(vline);
+            } else if (closestH != null) {
+                System.err.println("Lines too far away to be considered a target");
+            }
+            System.out.println("Found " + targetLines.size() + " lines in target");
+
+            VisionTarget target = new VisionTarget(vline, closestH);
+            System.out.println(target);
+            window.setTargetInfo(target);
+            drawTarget(img, target);
         }
 
         window.showResult(img);

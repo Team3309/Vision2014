@@ -24,6 +24,7 @@ public class CalibrationWindow extends JFrame implements SliderListener {
     private ArrayList<SliderListener> listeners = new ArrayList<SliderListener>();
 
     private ImageSlider hue, sat, val, erode, dilate, thresh, result;
+    private TargetInfoPane targetInfo;
 
     private CalibrationWindow() {
         setLayout(new GridBagLayout());
@@ -35,6 +36,7 @@ public class CalibrationWindow extends JFrame implements SliderListener {
         erode = new ImageSlider("Erosion", 1, 0, 25);
         dilate = new ImageSlider("Dilation", 1, 0, 25);
         result = new ImageSlider("Result", 0, 0, 0);
+        targetInfo = new TargetInfoPane();
 
         hue.addListener(this);
         sat.addListener(this);
@@ -70,6 +72,8 @@ public class CalibrationWindow extends JFrame implements SliderListener {
         add(erode, c);
         c.gridx = 2;
         add(result, c);
+        c.gridx = 3;
+        add(targetInfo, c);
 
         pack();
         setVisible(true);
@@ -190,6 +194,10 @@ public class CalibrationWindow extends JFrame implements SliderListener {
 
     public void setDilation(int val) {
         dilate.setSlider(0, val);
+    }
+
+    public void setTargetInfo(VisionTarget target) {
+        targetInfo.setTarget(target);
     }
 
 }
