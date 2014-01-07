@@ -16,15 +16,15 @@ public class VisionConfig {
     private int imageWidth = 640;
     private int imageHeight = 480;
 
-    private int hueMin = 77;//66;
-    private int hueMax = 162;//91;
-    private int satMin = 0;//161;
+    private int hueMin = 66;
+    private int hueMax = 91;
+    private int satMin = 161;
     private int satMax = 255;
     private int valMin = 109;
     private int valMax = 255;
 
-    private int erosionSize = 6;//2;
-    private int dilationSize = 0;//1;
+    private int erosionSize = 2;
+    private int dilationSize = 0;
 
     private double verticalFov = 37.4;
 

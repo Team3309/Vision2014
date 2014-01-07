@@ -134,8 +134,6 @@ public class VisionTarget {
             s += "hot";
         else
             s += "not hot";
-        if (horizontal != null)
-            s += " horizontal: " + horizontal.length();
         return s;
     }
 
