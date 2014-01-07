@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class VisionTarget {
 
-    private static final double verticalLengthInches = 32;
+    public static final double VERTICAL_LENGTH_INCHES = 32;
 
     private Line vertical;
     private Line horizontal;
@@ -94,7 +94,7 @@ public class VisionTarget {
     public double distance() {
         VisionConfig c = VisionConfig.getInstance();
         double lengthPix = vertical.length();
-        return verticalLengthInches * c.getImageHeight() / (2 * lengthPix * Math.tan(Math.toDegrees(c.getVerticalFov())));
+        return VERTICAL_LENGTH_INCHES * c.getImageHeight() / (2 * lengthPix * Math.tan(Math.toDegrees(c.getVerticalFov())));
     }
 
     public double azimuth() {
