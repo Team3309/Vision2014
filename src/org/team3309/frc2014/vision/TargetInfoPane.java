@@ -8,7 +8,7 @@ import java.awt.*;
  */
 public class TargetInfoPane extends Container {
 
-    private JLabel pixels = new JLabel(), hot = new JLabel(), distance = new JLabel(), angle = new JLabel();
+    private JLabel pixels = new JLabel(), hot = new JLabel(), distance = new JLabel(), azimuth = new JLabel();
 
     public TargetInfoPane() {
         setLayout(new GridBagLayout());
@@ -26,7 +26,7 @@ public class TargetInfoPane extends Container {
         add(distance, c);
 
         c.gridy = 2;
-        add(angle, c);
+        add(azimuth, c);
 
         c.gridy = 3;
         add(hot, c);
@@ -37,6 +37,7 @@ public class TargetInfoPane extends Container {
 
     public void setTarget(VisionTarget target) {
         distance.setText(target.distance() + "ft");
+        azimuth.setText(target.azimuth() + "°");
         hot.setText(target.isHot() ? "Hot" : "Not hot");
         pixels.setText(target.getVertical().length() + "px");
     }

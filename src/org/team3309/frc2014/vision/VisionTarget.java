@@ -97,6 +97,13 @@ public class VisionTarget {
         return verticalLengthInches * c.getImageHeight() / (2 * lengthPix * Math.tan(Math.toDegrees(c.getVerticalFov())));
     }
 
+    public double azimuth() {
+        VisionConfig c = VisionConfig.getInstance();
+        double dist = distance();
+        //TODO actually compute stuff here
+        return 0;
+    }
+
     public String toString() {
         String s = "Target: ";
         if (isLeft())
