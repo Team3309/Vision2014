@@ -24,7 +24,7 @@ public class VisionConfig {
     private int valMax = 255;
 
     private int erosionSize = 2;
-    private int dilationSize = 1;
+    private int dilationSize = 0;//1;
 
     private double verticalFov = 37.4;
 

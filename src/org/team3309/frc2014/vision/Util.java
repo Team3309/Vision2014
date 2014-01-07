@@ -32,4 +32,9 @@ public class Util {
         return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
     }
 
+    public static double pixelsToInches(int pixels, double targetPixels) {
+        double pixelsInchesRatio = targetPixels / VisionTarget.VERTICAL_LENGTH_INCHES;
+        return pixels * pixelsInchesRatio;
+    }
+
 }

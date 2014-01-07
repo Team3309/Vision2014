@@ -15,6 +15,9 @@ public class VisionTarget {
     private Line horizontal;
     private Point point;
 
+    private boolean overrideSide = false;
+    private boolean overrideRight = false;
+
     public static VisionTarget make(List<Line> lines) {
         Line vertical = null, horizontal = null;
         for (Line l : lines) {
@@ -60,6 +63,8 @@ public class VisionTarget {
     }
 
     public boolean isRight() {
+        if (overrideSide)
+            return overrideRight;
         if (horizontal != null && vertical != null)
             return horizontal.getAverageX() > vertical.getAverageX();
         return true;
@@ -104,6 +109,20 @@ public class VisionTarget {
         return 0;
     }
 
+    public void overrideLeft() {
+        overrideSide = true;
+        overrideRight = false;
+    }
+
+    public void overrideRight() {
+        overrideSide = true;
+        overrideRight = true;
+    }
+
+    public void clearSideOverride() {
+        overrideSide = false;
+    }
+
     public String toString() {
         String s = "Target: ";
         if (isLeft())
@@ -115,6 +134,8 @@ public class VisionTarget {
             s += "hot";
         else
             s += "not hot";
+        if (horizontal != null)
+            s += " horizontal: " + horizontal.length();
         return s;
     }
 
