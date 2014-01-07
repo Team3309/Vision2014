@@ -36,10 +36,10 @@ public class TargetInfoPane extends Container {
     }
 
     public void setTarget(VisionTarget target) {
-        distance.setText(target.distance() + "ft");
-        azimuth.setText(target.azimuth() + "°");
+        distance.setText(Math.round(target.distance()) + "in");
+        azimuth.setText(Math.round(target.azimuth()) + "°");
         hot.setText(target.isHot() ? "Hot" : "Not hot");
-        pixels.setText(target.getVertical().length() + "px");
+        pixels.setText(Math.round(target.getVertical().length()) + "px");
     }
 
 }
