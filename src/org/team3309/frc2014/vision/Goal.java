@@ -1,7 +1,5 @@
 package org.team3309.frc2014.vision;
 
-import java.util.List;
-
 /**
  * Created by vmagro on 1/5/14.
  */
@@ -14,39 +12,23 @@ public class Goal {
         ERROR
     }
 
-    private static double ratioOneThird = 3.8 / 3;
-    private static double ratioTwoThirds = 7.7 / 3;
-    private static double ratioFull = 1;
+    private static double ratioOneThird = 3.8 * 2 / 3;
+    private static double ratioTwoThirds = 7.7 * 2 / 3;
+    private static double ratioFull = 8 * 2 / 3;
 
     private double x, y;
 
-    private Line top, bottom, side;
+    private Line top, bottom;
 
-    public static Goal getGoal(List<Line> lines) {
-        if (lines.size() < 3) {
-            System.err.println("Less than 3 lines, no valid goal");
-            return null;
-        }
-        Line top = null, bottom = null, side = null;
-        for (Line l : lines) {
-            if (l.isHorizontal()) {
-                if (top != null && top.getAverageY() > l.getAverageY())
-                    bottom = l;
-                else if (top != null && top.getAverageY() < l.getAverageY()) {
-                    bottom = top;
-                    top = l;
-                } else
-                    top = l;
-            } else
-                side = l;
-        }
-        return new Goal(top, bottom, side);
+    public static Goal getGoal(Line[] lines) {
+        Line top = lines[0].getAverageY() < lines[1].getAverageY() ? lines[0] : lines[1];
+        Line bottom = lines[0].getAverageY() > lines[1].getAverageY() ? lines[0] : lines[1];
+        return new Goal(top, bottom);
     }
 
-    private Goal(Line top, Line bottom, Line side) {
+    private Goal(Line top, Line bottom) {
         this.top = top;
         this.bottom = bottom;
-        this.side = side;
     }
 
     public Line getTop() {
@@ -57,14 +39,11 @@ public class Goal {
         return bottom;
     }
 
-    public Line getSide() {
-        return side;
-    }
-
     public Fill getFill() {
-        if (side == null || top == null || bottom == null)
+        if (top == null || bottom == null)
             return Fill.ERROR;
-        double ratio = top.length() / side.length();
+        double ratio = top.length() / Math.abs(top.getAverageY() - bottom.getAverageY());
+        System.out.println(ratio);
         if (Math.abs(ratio - ratioOneThird) < Math.abs(ratio - ratioTwoThirds) && Math.abs(ratio - ratioOneThird) < Math.abs(ratio - ratioFull)) {
             return Fill.ONE_THIRD;
         }
@@ -77,23 +56,8 @@ public class Goal {
         return Fill.ERROR;
     }
 
-    public boolean isLeft() {
-        return !isRight();
-    }
-
-    public boolean isRight() {
-        if (side == null || top == null || bottom == null)
-            return false;
-        return (side.getAverageX() < top.getAverageX() && side.getAverageX() < bottom.getAverageX());
-    }
-
     public String toString() {
         String s = "Goal: ";
-        if (isLeft())
-            s += "left";
-        else
-            s += "right";
-        s += " ";
         switch (getFill()) {
             case ERROR:
                 s += "invalid";

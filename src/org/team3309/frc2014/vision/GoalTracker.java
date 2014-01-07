@@ -106,10 +106,10 @@ public class GoalTracker {
     }
 
     private static void drawGoal(Mat img, Goal goal) {
-        Scalar color = goal.isLeft() ? new Scalar(0, 255, 0) : new Scalar(0, 0, 255);
+        /*Scalar color = goal.isLeft() ? new Scalar(0, 255, 0) : new Scalar(0, 0, 255);
         drawLine(img, goal.getTop(), 5, color);
         drawLine(img, goal.getBottom(), 5, color);
-        drawLine(img, goal.getSide(), 5, color);
+        drawLine(img, goal.getSide(), 5, color);*/
     }
 
     private static void drawTarget(Mat img, VisionTarget target) {
@@ -145,14 +145,33 @@ public class GoalTracker {
         }
 
         System.out.printf("Found %d horizontal lines\n", hLines.size());
-        System.out.printf("Found %d vertical lines", vLines.size());
+        System.out.printf("Found %d vertical lines\n", vLines.size());
+
+        Line[] longestH = new Line[2];
 
         for (Line l : hLines) {
-            drawLine(img, l, 5, new Scalar(0, 0, 255));
+            //drawLine(img, l, 5, new Scalar(0, 0, 255));
+            if (longestH[0] == null)
+                longestH[0] = l;
+            else if (longestH[1] == null)
+                longestH[1] = l;
+            else if (l.length() > longestH[0].length()) {
+                longestH[1] = longestH[0];
+                longestH[0] = l;
+            } else if (l.length() > longestH[1].length())
+                longestH[1] = l;
         }
         for (Line l : vLines) {
-            drawLine(img, l, 5, new Scalar(255, 0, 0));
+            //drawLine(img, l, 5, new Scalar(255, 0, 0));
         }
+
+        Point center = new Point((longestH[0].getAverageX() + longestH[1].getAverageX()) / 2, (longestH[0].getAverageY() + longestH[1].getAverageY()) / 2);
+        Core.circle(img, center, 10, new Scalar(0, 0, 255), -1);
+        for (Line l : longestH) {
+            drawLine(img, l, 5, new Scalar(0, 0, 255));
+        }
+        Goal goal = Goal.getGoal(longestH);
+        System.out.println(goal);
 
         window.showResult(img);
 
