@@ -206,16 +206,13 @@ public class GoalTracker {
                     closestH = hline;
                 }
             }
-            System.out.println(vline + " closest to " + closestH + " distance = " + Util.distance(closestH.getLeft(), vline.getTop()));
 
             ArrayList<Line> targetLines = new ArrayList<Line>();
             targetLines.add(vline);
             if (closestH != null && Util.distance(closestH.getLeft(), vline.getTop()) < 50) {
                 targetLines.add(closestH);
             } else if (closestH != null) {
-                System.out.println("Lines too far away to be considered a target");
             }
-            System.out.println("Found " + targetLines.size() + " lines in target");
 
             VisionTarget target = VisionTarget.make(targetLines);
             targets.add(target);

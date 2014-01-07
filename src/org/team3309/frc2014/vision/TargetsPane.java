@@ -15,13 +15,14 @@ public class TargetsPane extends Container {
         GridBagConstraints c = new GridBagConstraints();
 
         c.gridy = 0;
-        c.anchor = GridBagConstraints.NORTH;
+        c.anchor = GridBagConstraints.NORTHWEST;
+        c.ipadx = 20;
 
         c.gridx = 0;
-        add(leftTarget);
+        add(leftTarget, c);
 
         c.gridx = 1;
-        add(rightTarget);
+        add(rightTarget, c);
     }
 
     public void addTarget(VisionTarget target) {
