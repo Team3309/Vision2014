@@ -17,7 +17,7 @@ public class Util {
         MatOfByte matOfByte = new MatOfByte();
         Highgui.imencode(".jpg", img, matOfByte);
         byte[] byteArray = matOfByte.toArray();
-        BufferedImage bufImage = null;
+        BufferedImage bufImage;
         try {
             InputStream in = new ByteArrayInputStream(byteArray);
             bufImage = ImageIO.read(in);

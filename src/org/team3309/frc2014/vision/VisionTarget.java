@@ -48,7 +48,7 @@ public class VisionTarget {
         if (horizontal == null)
             System.err.println("No horizontal line");
 
-        if (horizontal != null) {
+        if (horizontal != null && vertical != null) {
             point = new Point(vertical.getAverageX(), horizontal.getAverageY());
         } else if (vertical != null) {
             point = new Point(vertical.getAverageX(), (vertical.getP1().y < vertical.getP2().y ? vertical.getP1().y : vertical.getP2().y));
