@@ -135,6 +135,10 @@ public class Tracker {
         Core.rectangle(img, r.boundingRect().tl(), r.boundingRect().br(), color, -1);
     }
 
+    private static void drawRectangle(Mat img, Rect r, Scalar color) {
+        Core.rectangle(img, r.tl(), r.br(), color, -1);
+    }
+
     private static void drawTarget(Mat img, VisionTarget target) {
         Scalar color = target.isLeft() ? new Scalar(0, 255, 0) : new Scalar(0, 0, 255);
         int thickness = target.isHot() ? 15 : 5;
@@ -154,8 +158,8 @@ public class Tracker {
         List<MatOfPoint> contours = findContours(bin);
         System.out.println("Found " + contours.size() + " contours");
 
-        ArrayList<RotatedRect> hBoxes = new ArrayList<RotatedRect>();
-        ArrayList<RotatedRect> vBoxes = new ArrayList<RotatedRect>();
+        ArrayList<Rect> hBoxes = new ArrayList<Rect>();
+        ArrayList<Rect> vBoxes = new ArrayList<Rect>();
 
         //separate out the horizontal and vertical boxes, ignore everything else
         for (MatOfPoint contour : contours) {
@@ -163,9 +167,9 @@ public class Tracker {
             RotatedRect rect = Imgproc.minAreaRect(points2f);
             if (rect.boundingRect().area() > 75) {
                 if (Util.isHorizontal(rect)) {
-                    hBoxes.add(rect);
+                    hBoxes.add(rect.boundingRect());
                 } else if (Util.isVertical(rect)) {
-                    vBoxes.add(rect);
+                    vBoxes.add(rect.boundingRect());
                 } else {
                     drawRectangle(img, rect, new Scalar(255, 0, 0));
                 }
@@ -175,24 +179,29 @@ public class Tracker {
         System.out.printf("Found %d horizontal boxes\n", hBoxes.size());
         System.out.printf("Found %d vertical boxes\n", vBoxes.size());
 
-        RotatedRect[] longestH = new RotatedRect[2];
+        Rect[] longestH = new Rect[2];
+        if (hBoxes.size() > 1) {
+            longestH[0] = hBoxes.get(0);
+            longestH[1] = hBoxes.get(1);
+        } else if (hBoxes.size() > 0)
+            longestH[0] = hBoxes.get(0);
 
-        for (RotatedRect rect : hBoxes) {
-            //drawLine(img, l, 5, new Scalar(0, 0, 255));
-            if (longestH[0] == null)
-                longestH[0] = rect;
-            else if (longestH[1] == null)
-                longestH[1] = rect;
-            else if (rect.boundingRect().width > longestH[0].boundingRect().width) {
+        for (Rect rect : hBoxes) {
+            //bigger than the longest horizontal box
+            if (rect.width > longestH[0].width) {
                 longestH[1] = longestH[0];
                 longestH[0] = rect;
-            } else if (rect.boundingRect().width > rect.boundingRect().width)
+                continue;
+            }
+            //not the longest but bigger than the second longest
+            else if (rect.width > longestH[1].width)
                 longestH[1] = rect;
         }
 
-        for (RotatedRect r : longestH) {
-            if (r != null)
+        for (Rect r : longestH) {
+            if (r != null) {
                 drawRectangle(img, r, new Scalar(0, 255, 0));
+            }
         }
 
         if (window != null)
