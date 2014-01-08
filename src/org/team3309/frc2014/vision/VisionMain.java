@@ -40,7 +40,21 @@ public class VisionMain implements SliderListener {
             w.addListener(this);
 
             sliderUpdated();
+            try {
+                Thread.sleep(250);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            sliderUpdated();
         }
+
+        long start = System.currentTimeMillis();
+
+        //GoalTracker.findGoal(Highgui.imread(imageName), w);
+        GoalTracker.findTarget(Highgui.imread(imageName), w);
+
+        long end = System.currentTimeMillis();
+        System.out.println("Processing took " + (end - start) + "ms");
     }
 
     @Override
@@ -58,8 +72,13 @@ public class VisionMain implements SliderListener {
         c.setErosionSize(w.getErosionSize());
         c.setDilationSize(w.getDilationSize());
 
+        long start = System.currentTimeMillis();
+
         //GoalTracker.findGoal(Highgui.imread(imageName), w);
-        GoalTracker.findTarget(Highgui.imread(imageName), null);
+        GoalTracker.findTarget(Highgui.imread(imageName), w);
+
+        long end = System.currentTimeMillis();
+        System.out.println("Processing took " + (end - start) + "ms");
 
         /*Mat img = new Mat();
         capture.read(img);

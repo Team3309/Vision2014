@@ -192,17 +192,21 @@ public class GoalTracker {
         Point center = new Point((longestH[0].getAverageX() + longestH[1].getAverageX()) / 2, (longestH[0].getAverageY() + longestH[1].getAverageY()) / 2);
         Core.circle(img, center, 10, new Scalar(0, 0, 255), -1);
         for (Line l : longestH) {
-            drawLine(img, l, 5, new Scalar(0, 0, 255));
+            if (window != null)
+                drawLine(img, l, 5, new Scalar(0, 0, 255));
         }
         Goal goal = Goal.getGoal(longestH);
         System.out.println(goal);
 
-        window.showResult(img);
+        if (window != null)
+            window.showResult(img);
 
         return null;
     }
 
     public static List<VisionTarget> findTarget(Mat img, CalibrationWindow window) {
+        long start = System.currentTimeMillis();
+
         Mat hsv = new Mat(img.size(), CvType.CV_8UC3);
         Imgproc.cvtColor(img, hsv, Imgproc.COLOR_BGR2HSV);
         Mat bin = threshold(hsv, window);
@@ -267,13 +271,20 @@ public class GoalTracker {
 
         //display info about the target (on the image and in the target info pane)
         for (VisionTarget target : targets) {
-            drawTarget(img, target);
-            if (window != null)
+            if (window != null) {
+                drawTarget(img, target);
                 window.showTargetInfo(target);
+            }
         }
 
         if (window != null)
             window.showResult(img);
+
+        long end = System.currentTimeMillis();
+
+        if (window != null) {
+            window.setProcessingTime(end - start);
+        }
 
         return targets;
     }
