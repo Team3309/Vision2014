@@ -62,6 +62,8 @@ public class Tracker {
         // Apply the erosion operation
         // Erosion makes the white parts of the image smaller, which removes some small noise particles
         Imgproc.erode(bin, bin, elementErosion);
+        if (w != null)
+            w.showErosion(bin);
 
         Mat elementDilation = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE,
                 new Size(2 * t.getDilation() + 1, 2 * t.getDilation() + 1),
@@ -71,10 +73,8 @@ public class Tracker {
         // have been caused by the erosion operation
         Imgproc.dilate(bin, bin, elementDilation);
 
-        if (w != null) {
+        if (w != null)
             w.showDilation(bin);
-            w.showErosion(bin);
-        }
     }
 
     private static List<MatOfPoint> findContours(Mat bin) {
@@ -154,48 +154,46 @@ public class Tracker {
         List<MatOfPoint> contours = findContours(bin);
         System.out.println("Found " + contours.size() + " contours");
 
-        ArrayList<Line> hLines = new ArrayList<Line>();
-        ArrayList<Line> vLines = new ArrayList<Line>();
+        ArrayList<RotatedRect> hBoxes = new ArrayList<RotatedRect>();
+        ArrayList<RotatedRect> vBoxes = new ArrayList<RotatedRect>();
 
+        //separate out the horizontal and vertical boxes, ignore everything else
         for (MatOfPoint contour : contours) {
-            List<Line> lines = getLines(contour);
-            for (Line l : lines) {
-                if (l.isHorizontal())
-                    hLines.add(l);
-                if (l.isVertical())
-                    vLines.add(l);
+            MatOfPoint2f points2f = new MatOfPoint2f(contour.toArray());
+            RotatedRect rect = Imgproc.minAreaRect(points2f);
+            if (rect.boundingRect().area() > 75) {
+                if (Util.isHorizontal(rect)) {
+                    hBoxes.add(rect);
+                } else if (Util.isVertical(rect)) {
+                    vBoxes.add(rect);
+                } else {
+                    drawRectangle(img, rect, new Scalar(255, 0, 0));
+                }
             }
         }
 
-        System.out.printf("Found %d horizontal lines\n", hLines.size());
-        System.out.printf("Found %d vertical lines\n", vLines.size());
+        System.out.printf("Found %d horizontal boxes\n", hBoxes.size());
+        System.out.printf("Found %d vertical boxes\n", vBoxes.size());
 
-        Line[] longestH = new Line[2];
+        RotatedRect[] longestH = new RotatedRect[2];
 
-        for (Line l : hLines) {
+        for (RotatedRect rect : hBoxes) {
             //drawLine(img, l, 5, new Scalar(0, 0, 255));
             if (longestH[0] == null)
-                longestH[0] = l;
+                longestH[0] = rect;
             else if (longestH[1] == null)
-                longestH[1] = l;
-            else if (l.length() > longestH[0].length()) {
+                longestH[1] = rect;
+            else if (rect.boundingRect().width > longestH[0].boundingRect().width) {
                 longestH[1] = longestH[0];
-                longestH[0] = l;
-            } else if (l.length() > longestH[1].length())
-                longestH[1] = l;
-        }
-        for (Line l : vLines) {
-            //drawLine(img, l, 5, new Scalar(255, 0, 0));
+                longestH[0] = rect;
+            } else if (rect.boundingRect().width > rect.boundingRect().width)
+                longestH[1] = rect;
         }
 
-        Point center = new Point((longestH[0].getAverageX() + longestH[1].getAverageX()) / 2, (longestH[0].getAverageY() + longestH[1].getAverageY()) / 2);
-        Core.circle(img, center, 10, new Scalar(0, 0, 255), -1);
-        for (Line l : longestH) {
-            if (window != null)
-                drawLine(img, l, 5, new Scalar(0, 0, 255));
+        for (RotatedRect r : longestH) {
+            if (r != null)
+                drawRectangle(img, r, new Scalar(0, 255, 0));
         }
-        Goal goal = Goal.getGoal(longestH);
-        System.out.println(goal);
 
         if (window != null)
             window.showResult(img);

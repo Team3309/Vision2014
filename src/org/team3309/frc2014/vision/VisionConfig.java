@@ -37,7 +37,7 @@ public class VisionConfig {
             .valMin(151)
             .valMax(255)
             .erode(0)
-            .dilate(7)
+            .dilate(3)
             .build();
 
     //TODO find real values for these
