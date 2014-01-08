@@ -210,7 +210,6 @@ public class GoalTracker {
         erodeAndDilate(bin, window);
 
         List<MatOfPoint> contours = findContours(bin);
-        System.out.println("Found " + contours.size() + " contours");
 
         ArrayList<RotatedRect> hBoxes = new ArrayList<RotatedRect>();
         ArrayList<RotatedRect> vBoxes = new ArrayList<RotatedRect>();
@@ -227,9 +226,6 @@ public class GoalTracker {
                 }
             }
         }
-
-        System.out.printf("Found %d horizontal boxes\n", hBoxes.size());
-        System.out.printf("Found %d vertical boxes\n", vBoxes.size());
 
         ArrayList<VisionTarget> targets = new ArrayList<VisionTarget>();
 
@@ -257,8 +253,6 @@ public class GoalTracker {
             targets.add(target);
         }
 
-        System.out.println("Found " + targets.size() + " targets");
-
         //This can override a target as the left target if, for example, the left target is not hot and therefore the
         //built-in side detection will not work
         if (targets.size() > 1) {
@@ -273,7 +267,6 @@ public class GoalTracker {
 
         //display info about the target (on the image and in the target info pane)
         for (VisionTarget target : targets) {
-            System.out.println(target);
             drawTarget(img, target);
             if (window != null)
                 window.showTargetInfo(target);

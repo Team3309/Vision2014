@@ -44,7 +44,12 @@ public class VisionMain implements SliderListener {
             sliderUpdated();
         }
 
+        long start = System.currentTimeMillis();
+
         List<VisionTarget> targets = GoalTracker.findTarget(Highgui.imread(imageName), null);
+
+        long end = System.currentTimeMillis();
+
         for (VisionTarget t : targets) {
             if (t.isHot()) {
                 if (t.isRight())
@@ -53,6 +58,11 @@ public class VisionMain implements SliderListener {
                     System.out.println("Left is hot");
             }
         }
+
+        double elapsed = end - start;
+
+        System.out.println("Took " + elapsed + "ms");
+
     }
 
     @Override
