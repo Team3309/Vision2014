@@ -225,6 +225,8 @@ public class GoalTracker {
                     hBoxes.add(rect);
                 } else if (Util.isVertical(rect)) {
                     vBoxes.add(rect);
+                } else {
+                    drawRectangle(img, rect, new Scalar(255, 0, 0));
                 }
             }
         }

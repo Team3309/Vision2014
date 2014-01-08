@@ -38,16 +38,18 @@ public class Util {
         return pixels * pixelsInchesRatio;
     }
 
+    private static final int ANGLE_THRESHOLD = 20;
+
     public static boolean isHorizontal(RotatedRect r) {
-        double angle = r.angle % 90;
-        if (Math.abs(angle) < 10 || Math.abs(angle - 90) < 10)
+        double angle = Math.abs(r.angle % 90);
+        if (angle < ANGLE_THRESHOLD || Math.abs(angle - 90) < ANGLE_THRESHOLD)
             return r.boundingRect().height < r.boundingRect().width;
         else return false;
     }
 
     public static boolean isVertical(RotatedRect r) {
         double angle = Math.abs(r.angle) % 90;
-        if (Math.abs(angle) < 10 || Math.abs(angle - 90) < 10)
+        if (angle < ANGLE_THRESHOLD || Math.abs(angle - 90) < ANGLE_THRESHOLD)
             return r.boundingRect().height > r.boundingRect().width;
         else return false;
     }
