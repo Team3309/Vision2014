@@ -210,7 +210,7 @@ public class Tracker {
         return null;
     }
 
-    public static List<VisionTarget> findTarget(Mat img, CalibrationWindow window) {
+    public static List<VisionTarget> findTargets(Mat img, CalibrationWindow window) {
         long start = System.currentTimeMillis();
 
         Mat hsv = new Mat(img.size(), CvType.CV_8UC3);

@@ -54,7 +54,7 @@ public class VisionMain implements SliderListener {
             Mat img = new Mat();
             capture.read(img);
             Imgproc.resize(img, img, new Size(640, 480));
-            Tracker.findTarget(img, w);
+            Tracker.findTargets(img, w);
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
@@ -79,11 +79,11 @@ public class VisionMain implements SliderListener {
         System.out.println(currentMode);
 
         Tracker.findGoal(Highgui.imread(imageName), w);
-        //Tracker.findTarget(Highgui.imread(imageName), w);
+        //Tracker.findTargets(Highgui.imread(imageName), w);
 
         /*Mat img = new Mat();
         capture.read(img);
         Imgproc.resize(img, img, new Size(640, 480));
-        Tracker.findTarget(img, w);*/
+        Tracker.findTargets(img, w);*/
     }
 }
