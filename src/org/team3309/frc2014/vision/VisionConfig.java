@@ -26,7 +26,9 @@ public class VisionConfig {
     private int erosionSize = 0;
     private int dilationSize = 2;
 
+    //TODO find real values for these
     private double verticalFov = 14.24;
+    private double horizontalFov = 37;
 
     private VisionConfig() {
 
@@ -122,5 +124,13 @@ public class VisionConfig {
 
     public void setVerticalFov(double verticalFov) {
         this.verticalFov = verticalFov;
+    }
+
+    public double getHorizontalFov() {
+        return horizontalFov;
+    }
+
+    public void setHorizontalFov(double horizontalFov) {
+        this.horizontalFov = horizontalFov;
     }
 }
