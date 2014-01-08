@@ -1,6 +1,7 @@
 package org.team3309.frc2014.vision;
 
 import org.opencv.core.Point;
+import org.opencv.core.RotatedRect;
 
 import java.util.List;
 
@@ -11,38 +12,26 @@ public class VisionTarget {
 
     public static final double VERTICAL_LENGTH_INCHES = 32;
 
-    private Line vertical;
-    private Line horizontal;
+    private RotatedRect vertical;
+    private RotatedRect horizontal;
     private Point point;
 
     private boolean overrideSide = false;
     private boolean overrideRight = false;
 
-    public static VisionTarget make(List<Line> lines) {
-        Line vertical = null, horizontal = null;
-        for (Line l : lines) {
-            if (l.isHorizontal()) {
-                if (horizontal != null) {
-                    System.err.println("Multiple horizontal lines");
-                    return null;
-                } else {
-                    horizontal = l;
-                }
-            }
-            if (l.isVertical()) {
-                if (vertical != null) {
-                    System.err.println("Multiple vertical lines");
-                    //return null;
-                } else {
-                    vertical = l;
-                }
-            }
+    public static VisionTarget make(List<RotatedRect> rects) {
+        RotatedRect vertical = null, horizontal = null;
+        for (RotatedRect r : rects) {
+            if (Util.isHorizontal(r))
+                horizontal = r;
+            if (Util.isVertical(r))
+                vertical = r;
         }
         VisionTarget target = new VisionTarget(vertical, horizontal);
         return target;
     }
 
-    public VisionTarget(Line vertical, Line horizontal) {
+    public VisionTarget(RotatedRect vertical, RotatedRect horizontal) {
         this.vertical = vertical;
         this.horizontal = horizontal;
 
@@ -52,9 +41,9 @@ public class VisionTarget {
             System.err.println("No horizontal line");
 
         if (horizontal != null && vertical != null) {
-            point = new Point(vertical.getAverageX(), horizontal.getAverageY());
+            point = new Point(vertical.center.x, horizontal.center.y);
         } else if (vertical != null) {
-            point = new Point(vertical.getAverageX(), vertical.getTop().y);
+            point = new Point(vertical.center.x, vertical.boundingRect().tl().y);
         }
     }
 
@@ -66,7 +55,7 @@ public class VisionTarget {
         if (overrideSide)
             return overrideRight;
         if (horizontal != null && vertical != null)
-            return horizontal.getAverageX() > vertical.getAverageX();
+            return horizontal.center.x > vertical.center.x;
         return true;
     }
 
@@ -88,17 +77,19 @@ public class VisionTarget {
         return -1 * (point.y - (c.getImageHeight() / 2)) / (c.getImageHeight() / 2);
     }
 
-    public Line getHorizontal() {
+    public RotatedRect getHorizontal() {
         return horizontal;
     }
 
-    public Line getVertical() {
+    public RotatedRect getVertical() {
         return vertical;
     }
 
     public double distance() {
         VisionConfig c = VisionConfig.getInstance();
-        double targetPx = vertical.length();
+        //the longer dimension is the height, so let's make sure that we get the longer dimension here
+        double targetPx = vertical.boundingRect().height > vertical.boundingRect().width ?
+                vertical.boundingRect().height : vertical.boundingRect().width;
         double distance = (VERTICAL_LENGTH_INCHES * (c.getImageHeight() / 2)) / (targetPx * Math.tan(Math.toRadians(c.getVerticalFov())));
         return distance;
     }

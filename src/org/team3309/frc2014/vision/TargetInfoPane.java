@@ -39,7 +39,7 @@ public class TargetInfoPane extends Container {
         distance.setText(Math.round(target.distance()) + "in");
         azimuth.setText(Math.round(target.azimuth()) + "°");
         hot.setText(target.isHot() ? "Hot" : "Not hot");
-        pixels.setText(Math.round(target.getVertical().length()) + "px");
+        pixels.setText(Math.round(target.getVertical().boundingRect().height) + "px");
     }
 
 }

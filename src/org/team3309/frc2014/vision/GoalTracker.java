@@ -116,12 +116,16 @@ public class GoalTracker {
         drawLine(img, goal.getSide(), 5, color);*/
     }
 
+    private static void drawRectangle(Mat img, RotatedRect r, Scalar color) {
+        Core.rectangle(img, r.boundingRect().tl(), r.boundingRect().br(), color, -1);
+    }
+
     private static void drawTarget(Mat img, VisionTarget target) {
         Scalar color = target.isLeft() ? new Scalar(0, 255, 0) : new Scalar(0, 0, 255);
         int thickness = target.isHot() ? 15 : 5;
-        drawLine(img, target.getVertical(), thickness, color);
+        drawRectangle(img, target.getVertical(), color);
         if (target.getHorizontal() != null)
-            drawLine(img, target.getHorizontal(), thickness, color);
+            drawRectangle(img, target.getHorizontal(), color);
     }
 
     public static Goal findGoal(Mat img, CalibrationWindow window) {
@@ -193,62 +197,53 @@ public class GoalTracker {
         List<MatOfPoint> contours = findContours(bin);
         System.out.println("Found " + contours.size() + " contours");
 
-        ArrayList<Line> hLines = new ArrayList<Line>();
-        ArrayList<Line> vLines = new ArrayList<Line>();
+        ArrayList<RotatedRect> hBoxes = new ArrayList<RotatedRect>();
+        ArrayList<RotatedRect> vBoxes = new ArrayList<RotatedRect>();
 
         for (MatOfPoint contour : contours) {
-            List<Line> lines = getLines(contour);
-            for (Line l : lines) {
-                if (l.isHorizontal())
-                    hLines.add(l);
-                if (l.isVertical())
-                    vLines.add(l);
+            MatOfPoint2f points2f = new MatOfPoint2f(contour.toArray());
+            RotatedRect rect = Imgproc.minAreaRect(points2f);
+            if (rect.boundingRect().area() > 75) {
+                if (Util.isHorizontal(rect)) {
+                    hBoxes.add(rect);
+                } else if (Util.isVertical(rect)) {
+                    vBoxes.add(rect);
+                }
             }
         }
 
-        System.out.printf("Found %d horizontal lines\n", hLines.size());
-        System.out.printf("Found %d vertical lines\n", vLines.size());
-
-        for (Line l : hLines) {
-            drawLine(img, l, 5, new Scalar(255, 0, 0));
-        }
-        for (Line l : vLines) {
-            drawLine(img, l, 5, new Scalar(0, 255, 0));
-        }
-
+        System.out.printf("Found %d horizontal boxes\n", hBoxes.size());
+        System.out.printf("Found %d vertical boxes\n", vBoxes.size());
 
         ArrayList<VisionTarget> targets = new ArrayList<VisionTarget>();
 
-        for (Line vline : vLines) {
-            Line closestH = null;
-            for (Line hline : hLines) {
+        for (RotatedRect vrect : vBoxes) {
+            RotatedRect closestH = null;
+            for (RotatedRect hrect : hBoxes) {
                 if (closestH != null) {
-                    if (hline.distance(vline) < closestH.distance(vline))
-                        closestH = hline;
+                    if (Util.distance(vrect.center, hrect.center) < Util.distance(vrect.center, closestH.center))
+                        closestH = hrect;
                 } else {
-                    closestH = hline;
+                    closestH = hrect;
                 }
             }
+            ArrayList<RotatedRect> targetRects = new ArrayList<RotatedRect>();
+            targetRects.add(vrect);
+            if (closestH != null && Util.distance(vrect.center, closestH.center) < 100)
+                targetRects.add(closestH);
 
-            ArrayList<Line> targetLines = new ArrayList<Line>();
-            targetLines.add(vline);
-            if (closestH != null && Util.distance(closestH.getLeft(), vline.getTop()) < 50) {
-                targetLines.add(closestH);
-            } else if (closestH != null) {
-            }
-
-            VisionTarget target = VisionTarget.make(targetLines);
+            VisionTarget target = VisionTarget.make(targetRects);
             targets.add(target);
         }
 
         System.out.println("Found " + targets.size() + " targets");
 
         if (targets.size() > 1) {
-            for (int i = 0; i < targets.size(); i++) {
-                VisionTarget target = targets.get(i);
-                for (int j = i; j < targets.size(); j++) {
-                    if (target.getPoint().x < targets.get(j).getPoint().x)
-                        target.overrideLeft();
+            for (VisionTarget target : targets) {
+                for (VisionTarget otherTarget : targets) {
+                    if (!otherTarget.equals(target))
+                        if (target.getPoint().x < otherTarget.getPoint().x)
+                            target.overrideLeft();
                 }
             }
         }

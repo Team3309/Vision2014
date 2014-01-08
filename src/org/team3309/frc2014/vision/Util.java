@@ -3,6 +3,7 @@ package org.team3309.frc2014.vision;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.core.Point;
+import org.opencv.core.RotatedRect;
 import org.opencv.highgui.Highgui;
 
 import javax.imageio.ImageIO;
@@ -35,6 +36,20 @@ public class Util {
     public static double pixelsToInches(int pixels, double targetPixels) {
         double pixelsInchesRatio = targetPixels / VisionTarget.VERTICAL_LENGTH_INCHES;
         return pixels * pixelsInchesRatio;
+    }
+
+    public static boolean isHorizontal(RotatedRect r) {
+        double angle = r.angle % 90;
+        if (Math.abs(angle) < 10 || Math.abs(angle - 90) < 10)
+            return r.boundingRect().height < r.boundingRect().width;
+        else return false;
+    }
+
+    public static boolean isVertical(RotatedRect r) {
+        double angle = Math.abs(r.angle) % 90;
+        if (Math.abs(angle) < 10 || Math.abs(angle - 90) < 10)
+            return r.boundingRect().height > r.boundingRect().width;
+        else return false;
     }
 
 }
