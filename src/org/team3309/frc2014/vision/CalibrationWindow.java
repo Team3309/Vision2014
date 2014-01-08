@@ -67,9 +67,9 @@ public class CalibrationWindow extends JFrame implements SliderListener {
         c.gridy = 1;
 
         c.gridx = 0;
-        add(dilate, c);
-        c.gridx = 1;
         add(erode, c);
+        c.gridx = 1;
+        add(dilate, c);
         c.gridx = 2;
         add(result, c);
         c.gridx = 3;

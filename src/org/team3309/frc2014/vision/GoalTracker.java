@@ -11,6 +11,14 @@ import java.util.List;
  */
 public class GoalTracker {
 
+    /**
+     * This method performs a threshold on the 3 separate channels of an HSV image.
+     * Threshold values are retrieved from VisionConfig
+     *
+     * @param hsv
+     * @param w
+     * @return
+     */
     private static Mat threshold(Mat hsv, CalibrationWindow w) {
         ArrayList<Mat> split = new ArrayList<Mat>();
         Core.split(hsv, split);
@@ -35,9 +43,12 @@ public class GoalTracker {
         w.showSat(satBin);
         w.showVal(valBin);
 
+        //combine all of the thresholded channels into a single Mat
         Core.bitwise_or(hueBin, bin, bin);
         Core.bitwise_and(satBin, bin, bin);
         Core.bitwise_and(valBin, bin, bin);
+
+        w.showThreshold(bin);
 
         return bin;
     }
@@ -45,19 +56,19 @@ public class GoalTracker {
     private static void erodeAndDilate(Mat bin, CalibrationWindow w) {
         VisionConfig c = VisionConfig.getInstance();
 
-        Mat elementDilation = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE,
-                new Size(2 * c.getDilationSize() + 1, 2 * c.getDilationSize() + 1),
-                new Point(c.getDilationSize(), c.getDilationSize()));
-        /// Apply the erosion operation
-        Imgproc.erode(bin, bin, elementDilation);
-
-        w.showDilation(bin);
-
         Mat elementErosion = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE,
                 new Size(2 * c.getErosionSize() + 1, 2 * c.getErosionSize() + 1),
                 new Point(c.getErosionSize(), c.getErosionSize()));
         /// Apply the erosion operation
-        Imgproc.dilate(bin, bin, elementErosion);
+        Imgproc.erode(bin, bin, elementErosion);
+
+        Mat elementDilation = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE,
+                new Size(2 * c.getDilationSize() + 1, 2 * c.getDilationSize() + 1),
+                new Point(c.getDilationSize(), c.getDilationSize()));
+        /// Apply the dilation operation
+        Imgproc.dilate(bin, bin, elementDilation);
+
+        w.showDilation(bin);
 
         w.showErosion(bin);
     }
@@ -190,7 +201,6 @@ public class GoalTracker {
         Mat hsv = new Mat(img.size(), CvType.CV_8UC3);
         Imgproc.cvtColor(img, hsv, Imgproc.COLOR_BGR2HSV);
         Mat bin = threshold(hsv, window);
-        window.showThreshold(bin.clone());
 
         erodeAndDilate(bin, window);
 
