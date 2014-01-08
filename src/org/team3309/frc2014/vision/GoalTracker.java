@@ -33,14 +33,12 @@ public class GoalTracker {
 
         VisionConfig c = VisionConfig.getInstance();
 
-        Mat bin = new Mat(hsv.size(), CvType.CV_8UC1);
-
         Core.inRange(hue, new Scalar(c.getHueMin()), new Scalar(c.getHueMax()), hueBin);
         Core.inRange(sat, new Scalar(c.getSatMin()), new Scalar(c.getSatMax()), satBin);
-        Core.inRange(val, new Scalar(c.getValMin()), new Scalar(c.getSatMax()), valBin);
+        Core.inRange(val, new Scalar(c.getValMin()), new Scalar(c.getValMax()), valBin);
 
         //combine all of the thresholded channels into a single Mat
-        Core.bitwise_or(hueBin, bin, bin);
+        Mat bin = hueBin.clone();
         Core.bitwise_and(satBin, bin, bin);
         Core.bitwise_and(valBin, bin, bin);
 

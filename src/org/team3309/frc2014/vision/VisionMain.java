@@ -1,7 +1,9 @@
 package org.team3309.frc2014.vision;
 
-import org.opencv.highgui.Highgui;
+import org.opencv.core.Mat;
+import org.opencv.core.Size;
 import org.opencv.highgui.VideoCapture;
+import org.opencv.imgproc.Imgproc;
 
 /**
  * Created by vmagro on 1/5/14.
@@ -23,7 +25,7 @@ public class VisionMain implements SliderListener {
     public VisionMain() {
         w = CalibrationWindow.getInstance();
         capture = new VideoCapture();
-        //capture.open(0);
+        capture.open(0);
 
         VisionConfig c = VisionConfig.getInstance();
         if (w != null) {
@@ -48,13 +50,18 @@ public class VisionMain implements SliderListener {
             sliderUpdated();
         }
 
-        long start = System.currentTimeMillis();
+        while (true) {
+            Mat img = new Mat();
+            capture.read(img);
+            Imgproc.resize(img, img, new Size(640, 480));
+            GoalTracker.findTarget(img, w);
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 
-        //GoalTracker.findGoal(Highgui.imread(imageName), w);
-        GoalTracker.findTarget(Highgui.imread(imageName), w);
-
-        long end = System.currentTimeMillis();
-        System.out.println("Processing took " + (end - start) + "ms");
     }
 
     @Override
@@ -72,13 +79,8 @@ public class VisionMain implements SliderListener {
         c.setErosionSize(w.getErosionSize());
         c.setDilationSize(w.getDilationSize());
 
-        long start = System.currentTimeMillis();
-
         //GoalTracker.findGoal(Highgui.imread(imageName), w);
-        GoalTracker.findTarget(Highgui.imread(imageName), w);
-
-        long end = System.currentTimeMillis();
-        System.out.println("Processing took " + (end - start) + "ms");
+        //GoalTracker.findTarget(Highgui.imread(imageName), w);
 
         /*Mat img = new Mat();
         capture.read(img);
