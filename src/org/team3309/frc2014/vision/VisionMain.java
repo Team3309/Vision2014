@@ -52,7 +52,7 @@ public class VisionMain implements SliderListener {
             Mat img = new Mat();
             capture.read(img);
             Imgproc.resize(img, img, new Size(640, 480));
-            GoalTracker.findTarget(img, w);
+            Tracker.findTarget(img, w);
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
@@ -77,12 +77,12 @@ public class VisionMain implements SliderListener {
         c.setErosionSize(w.getErosionSize());
         c.setDilationSize(w.getDilationSize());
 
-        //GoalTracker.findGoal(Highgui.imread(imageName), w);
-        GoalTracker.findTarget(Highgui.imread(imageName), w);
+        //Tracker.findGoal(Highgui.imread(imageName), w);
+        Tracker.findTarget(Highgui.imread(imageName), w);
 
         /*Mat img = new Mat();
         capture.read(img);
         Imgproc.resize(img, img, new Size(640, 480));
-        GoalTracker.findTarget(img, w);*/
+        Tracker.findTarget(img, w);*/
     }
 }

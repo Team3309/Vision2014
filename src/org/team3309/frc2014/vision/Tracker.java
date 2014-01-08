@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by vmagro on 1/5/14.
  */
-public class GoalTracker {
+public class Tracker {
 
     /**
      * This method performs a threshold on the 3 separate channels of an HSV image.
