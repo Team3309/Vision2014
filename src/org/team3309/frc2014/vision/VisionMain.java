@@ -20,6 +20,8 @@ public class VisionMain implements SliderListener {
 
     private String imageName = "image_one_third.jpg";
 
+    private TrackingConfig currentMode = VisionConfig.getInstance().getGoalThreshold();
+
     public VisionMain() {
         w = CalibrationWindow.getInstance();
         capture = new VideoCapture();
@@ -27,15 +29,15 @@ public class VisionMain implements SliderListener {
 
         VisionConfig c = VisionConfig.getInstance();
         if (w != null) {
-            w.setHueMin(c.getHueMin());
-            w.setHueMax(c.getHueMax());
-            w.setSatMin(c.getSatMin());
-            w.setSatMax(c.getSatMax());
-            w.setValMin(c.getValMin());
-            w.setValMax(c.getValMax());
+            w.setHueMin(currentMode.getHueMin());
+            w.setHueMax(currentMode.getHueMax());
+            w.setSatMin(currentMode.getSatMin());
+            w.setSatMax(currentMode.getSatMax());
+            w.setValMin(currentMode.getValMin());
+            w.setValMax(currentMode.getValMax());
 
-            w.setErosionSize(c.getErosionSize());
-            w.setDilation(c.getDilationSize());
+            w.setErosionSize(currentMode.getErosion());
+            w.setDilation(currentMode.getDilation());
 
             w.addListener(this);
 
@@ -64,21 +66,20 @@ public class VisionMain implements SliderListener {
 
     @Override
     public void sliderUpdated() {
-        VisionConfig c = VisionConfig.getInstance();
-        System.out.println(c);
+        currentMode.setHueMax(w.getHueMax());
+        currentMode.setHueMin(w.getHueMin());
+        currentMode.setSatMax(w.getSatMax());
+        currentMode.setSatMin(w.getSatMin());
+        currentMode.setValMax(w.getValMax());
+        currentMode.setValMin(w.getValMin());
 
-        c.setHueMax(w.getHueMax());
-        c.setHueMin(w.getHueMin());
-        c.setSatMax(w.getSatMax());
-        c.setSatMin(w.getSatMin());
-        c.setValMax(w.getValMax());
-        c.setValMin(w.getValMin());
+        currentMode.setErosion(w.getErosionSize());
+        currentMode.setDilation(w.getDilationSize());
 
-        c.setErosionSize(w.getErosionSize());
-        c.setDilationSize(w.getDilationSize());
+        System.out.println(currentMode);
 
-        //Tracker.findGoal(Highgui.imread(imageName), w);
-        Tracker.findTarget(Highgui.imread(imageName), w);
+        Tracker.findGoal(Highgui.imread(imageName), w);
+        //Tracker.findTarget(Highgui.imread(imageName), w);
 
         /*Mat img = new Mat();
         capture.read(img);

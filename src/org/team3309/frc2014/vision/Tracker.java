@@ -16,10 +16,11 @@ public class Tracker {
      * Threshold values are retrieved from VisionConfig
      *
      * @param hsv
+     * @param threshold
      * @param w
      * @return
      */
-    private static Mat threshold(Mat hsv, CalibrationWindow w) {
+    private static Mat threshold(Mat hsv, TrackingConfig threshold, CalibrationWindow w) {
         ArrayList<Mat> split = new ArrayList<Mat>();
         Core.split(hsv, split);
 
@@ -33,9 +34,9 @@ public class Tracker {
 
         VisionConfig c = VisionConfig.getInstance();
 
-        Core.inRange(hue, new Scalar(c.getHueMin()), new Scalar(c.getHueMax()), hueBin);
-        Core.inRange(sat, new Scalar(c.getSatMin()), new Scalar(c.getSatMax()), satBin);
-        Core.inRange(val, new Scalar(c.getValMin()), new Scalar(c.getValMax()), valBin);
+        Core.inRange(hue, new Scalar(threshold.getHueMin()), new Scalar(threshold.getHueMax()), hueBin);
+        Core.inRange(sat, new Scalar(threshold.getSatMin()), new Scalar(threshold.getSatMax()), satBin);
+        Core.inRange(val, new Scalar(threshold.getValMin()), new Scalar(threshold.getValMax()), valBin);
 
         //combine all of the thresholded channels into a single Mat
         Mat bin = hueBin.clone();
@@ -52,19 +53,19 @@ public class Tracker {
         return bin;
     }
 
-    private static void erodeAndDilate(Mat bin, CalibrationWindow w) {
+    private static void erodeAndDilate(Mat bin, TrackingConfig t, CalibrationWindow w) {
         VisionConfig c = VisionConfig.getInstance();
 
         Mat elementErosion = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE,
-                new Size(2 * c.getErosionSize() + 1, 2 * c.getErosionSize() + 1),
-                new Point(c.getErosionSize(), c.getErosionSize()));
+                new Size(2 * t.getErosion() + 1, 2 * t.getErosion() + 1),
+                new Point(t.getErosion(), t.getErosion()));
         // Apply the erosion operation
         // Erosion makes the white parts of the image smaller, which removes some small noise particles
         Imgproc.erode(bin, bin, elementErosion);
 
         Mat elementDilation = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE,
-                new Size(2 * c.getDilationSize() + 1, 2 * c.getDilationSize() + 1),
-                new Point(c.getDilationSize(), c.getDilationSize()));
+                new Size(2 * t.getDilation() + 1, 2 * t.getDilation() + 1),
+                new Point(t.getDilation(), t.getDilation()));
         // Apply the dilation operation
         // Dilation makes the white parts of the image larger, which fixes some irregularities that may
         // have been caused by the erosion operation
@@ -145,10 +146,10 @@ public class Tracker {
     public static Goal findGoal(Mat img, CalibrationWindow window) {
         Mat hsv = new Mat(img.size(), CvType.CV_8UC3);
         Imgproc.cvtColor(img, hsv, Imgproc.COLOR_BGR2HSV);
-        Mat bin = threshold(hsv, window);
+        Mat bin = threshold(hsv, VisionConfig.getInstance().getGoalThreshold(), window);
         window.showThreshold(bin.clone());
 
-        erodeAndDilate(bin, window);
+        erodeAndDilate(bin, VisionConfig.getInstance().getGoalThreshold(), window);
 
         List<MatOfPoint> contours = findContours(bin);
         System.out.println("Found " + contours.size() + " contours");
@@ -207,9 +208,9 @@ public class Tracker {
 
         Mat hsv = new Mat(img.size(), CvType.CV_8UC3);
         Imgproc.cvtColor(img, hsv, Imgproc.COLOR_BGR2HSV);
-        Mat bin = threshold(hsv, window);
+        Mat bin = threshold(hsv, VisionConfig.getInstance().getVisionTargetThreshold(), window);
 
-        erodeAndDilate(bin, window);
+        erodeAndDilate(bin, VisionConfig.getInstance().getVisionTargetThreshold(), window);
 
         List<MatOfPoint> contours = findContours(bin);
 

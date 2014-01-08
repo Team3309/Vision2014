@@ -16,15 +16,29 @@ public class VisionConfig {
     private int imageWidth = 640;
     private int imageHeight = 480;
 
-    private int hueMin = 66;
-    private int hueMax = 91;
-    private int satMin = 161;
-    private int satMax = 255;
-    private int valMin = 86;
-    private int valMax = 255;
+    private TrackingConfig visionTargetThreshold = new TrackingConfig.Builder()
+            .name("Vision Target")
+            .hueMin(66)
+            .hueMax(91)
+            .satMin(161)
+            .satMax(255)
+            .valMin(86)
+            .valMax(255)
+            .erode(0)
+            .dilate(2)
+            .build();
 
-    private int erosionSize = 0;
-    private int dilationSize = 2;
+    private TrackingConfig goalThreshold = new TrackingConfig.Builder()
+            .name("Goal")
+            .hueMin(66)
+            .hueMax(196)
+            .satMin(0)
+            .satMax(255)
+            .valMin(151)
+            .valMax(255)
+            .erode(0)
+            .dilate(7)
+            .build();
 
     //TODO find real values for these
     private double verticalFov = 14.24;
@@ -32,74 +46,6 @@ public class VisionConfig {
 
     private VisionConfig() {
 
-    }
-
-    public int getHueMin() {
-        return hueMin;
-    }
-
-    public void setHueMin(int hueMin) {
-        this.hueMin = hueMin;
-    }
-
-    public int getHueMax() {
-        return hueMax;
-    }
-
-    public void setHueMax(int hueMax) {
-        this.hueMax = hueMax;
-    }
-
-    public int getSatMin() {
-        return satMin;
-    }
-
-    public void setSatMin(int satMin) {
-        this.satMin = satMin;
-    }
-
-    public int getSatMax() {
-        return satMax;
-    }
-
-    public void setSatMax(int satMax) {
-        this.satMax = satMax;
-    }
-
-    public int getValMin() {
-        return valMin;
-    }
-
-    public void setValMin(int valMin) {
-        this.valMin = valMin;
-    }
-
-    public int getValMax() {
-        return valMax;
-    }
-
-    public void setValMax(int valMax) {
-        this.valMax = valMax;
-    }
-
-    public String toString() {
-        return "hue:" + hueMin + "," + hueMax + " sat:" + satMin + "," + satMax + " val:" + valMin + "," + valMax + " dilation:" + dilationSize + " erosion:" + erosionSize;
-    }
-
-    public int getErosionSize() {
-        return erosionSize;
-    }
-
-    public void setErosionSize(int erosionSize) {
-        this.erosionSize = erosionSize;
-    }
-
-    public int getDilationSize() {
-        return dilationSize;
-    }
-
-    public void setDilationSize(int dilationSize) {
-        this.dilationSize = dilationSize;
     }
 
     public int getImageWidth() {
@@ -132,5 +78,13 @@ public class VisionConfig {
 
     public void setHorizontalFov(double horizontalFov) {
         this.horizontalFov = horizontalFov;
+    }
+
+    public TrackingConfig getVisionTargetThreshold() {
+        return visionTargetThreshold;
+    }
+
+    public TrackingConfig getGoalThreshold() {
+        return goalThreshold;
     }
 }
