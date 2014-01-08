@@ -59,13 +59,16 @@ public class GoalTracker {
         Mat elementErosion = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE,
                 new Size(2 * c.getErosionSize() + 1, 2 * c.getErosionSize() + 1),
                 new Point(c.getErosionSize(), c.getErosionSize()));
-        /// Apply the erosion operation
+        // Apply the erosion operation
+        // Erosion makes the white parts of the image smaller, which removes some small noise particles
         Imgproc.erode(bin, bin, elementErosion);
 
         Mat elementDilation = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE,
                 new Size(2 * c.getDilationSize() + 1, 2 * c.getDilationSize() + 1),
                 new Point(c.getDilationSize(), c.getDilationSize()));
-        /// Apply the dilation operation
+        // Apply the dilation operation
+        // Dilation makes the white parts of the image larger, which fixes some irregularities that may
+        // have been caused by the erosion operation
         Imgproc.dilate(bin, bin, elementDilation);
 
         w.showDilation(bin);
