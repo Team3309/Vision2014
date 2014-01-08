@@ -39,16 +39,17 @@ public class GoalTracker {
         Core.inRange(sat, new Scalar(c.getSatMin()), new Scalar(c.getSatMax()), satBin);
         Core.inRange(val, new Scalar(c.getValMin()), new Scalar(c.getSatMax()), valBin);
 
-        w.showHue(hueBin);
-        w.showSat(satBin);
-        w.showVal(valBin);
-
         //combine all of the thresholded channels into a single Mat
         Core.bitwise_or(hueBin, bin, bin);
         Core.bitwise_and(satBin, bin, bin);
         Core.bitwise_and(valBin, bin, bin);
 
-        w.showThreshold(bin);
+        if (w != null) {
+            w.showHue(hueBin);
+            w.showSat(satBin);
+            w.showVal(valBin);
+            w.showThreshold(bin);
+        }
 
         return bin;
     }
@@ -71,9 +72,10 @@ public class GoalTracker {
         // have been caused by the erosion operation
         Imgproc.dilate(bin, bin, elementDilation);
 
-        w.showDilation(bin);
-
-        w.showErosion(bin);
+        if (w != null) {
+            w.showDilation(bin);
+            w.showErosion(bin);
+        }
     }
 
     private static List<MatOfPoint> findContours(Mat bin) {
@@ -272,11 +274,13 @@ public class GoalTracker {
         //display info about the target (on the image and in the target info pane)
         for (VisionTarget target : targets) {
             System.out.println(target);
-            window.showTargetInfo(target);
             drawTarget(img, target);
+            if (window != null)
+                window.showTargetInfo(target);
         }
 
-        window.showResult(img);
+        if (window != null)
+            window.showResult(img);
 
         return targets;
     }
