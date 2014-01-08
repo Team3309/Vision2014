@@ -147,7 +147,7 @@ public class Tracker {
             drawRectangle(img, target.getHorizontal(), color);
     }
 
-    public static Goal findGoal(Mat img, CalibrationWindow window) {
+    public static List<Goal> findGoals(Mat img, CalibrationWindow window) {
         Mat hsv = new Mat(img.size(), CvType.CV_8UC3);
         Imgproc.cvtColor(img, hsv, Imgproc.COLOR_BGR2HSV);
         Mat bin = threshold(hsv, VisionConfig.getInstance().getGoalThreshold(), window);

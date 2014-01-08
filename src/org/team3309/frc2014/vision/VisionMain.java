@@ -78,7 +78,7 @@ public class VisionMain implements SliderListener {
 
         System.out.println(currentMode);
 
-        Tracker.findGoal(Highgui.imread(imageName), w);
+        Tracker.findGoals(Highgui.imread(imageName), w);
         //Tracker.findTargets(Highgui.imread(imageName), w);
 
         /*Mat img = new Mat();
