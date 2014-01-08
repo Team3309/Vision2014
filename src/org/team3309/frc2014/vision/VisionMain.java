@@ -3,8 +3,6 @@ package org.team3309.frc2014.vision;
 import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
 
-import java.util.List;
-
 /**
  * Created by vmagro on 1/5/14.
  */
@@ -23,7 +21,7 @@ public class VisionMain implements SliderListener {
     private String imageName = "image_one_third.jpg";
 
     public VisionMain() {
-        //w = CalibrationWindow.getInstance();
+        w = CalibrationWindow.getInstance();
         capture = new VideoCapture();
         //capture.open(0);
 
@@ -43,26 +41,6 @@ public class VisionMain implements SliderListener {
 
             sliderUpdated();
         }
-
-        long start = System.currentTimeMillis();
-
-        List<VisionTarget> targets = GoalTracker.findTarget(Highgui.imread(imageName), null);
-
-        long end = System.currentTimeMillis();
-
-        for (VisionTarget t : targets) {
-            if (t.isHot()) {
-                if (t.isRight())
-                    System.out.println("Right is hot");
-                else
-                    System.out.println("Left is hot");
-            }
-        }
-
-        double elapsed = end - start;
-
-        System.out.println("Took " + elapsed + "ms");
-
     }
 
     @Override
