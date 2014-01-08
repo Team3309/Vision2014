@@ -35,11 +35,6 @@ public class VisionTarget {
         this.vertical = vertical;
         this.horizontal = horizontal;
 
-        if (vertical == null)
-            System.err.println("No vertical line");
-        if (horizontal == null)
-            System.err.println("No horizontal line");
-
         if (horizontal != null && vertical != null) {
             point = new Point(vertical.center.x, horizontal.center.y);
         } else if (vertical != null) {
