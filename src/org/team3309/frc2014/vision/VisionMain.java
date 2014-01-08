@@ -1,6 +1,7 @@
 package org.team3309.frc2014.vision;
 
 import org.opencv.highgui.Highgui;
+import org.opencv.highgui.VideoCapture;
 
 /**
  * Created by vmagro on 1/5/14.
@@ -15,10 +16,14 @@ public class VisionMain implements SliderListener {
 
     private CalibrationWindow w;
 
+    private VideoCapture capture;
+
     private String imageName = "image_one_third.jpg";
 
     public VisionMain() {
         w = CalibrationWindow.getInstance();
+        capture = new VideoCapture();
+        //capture.open(0);
 
         VisionConfig c = VisionConfig.getInstance();
         w.setHueMin(c.getHueMin());
@@ -53,5 +58,10 @@ public class VisionMain implements SliderListener {
 
         //GoalTracker.findGoal(Highgui.imread(imageName), w);
         GoalTracker.findTarget(Highgui.imread(imageName), w);
+
+        /*Mat img = new Mat();
+        capture.read(img);
+        Imgproc.resize(img, img, new Size(640, 480));
+        GoalTracker.findTarget(img, w);*/
     }
 }

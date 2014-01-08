@@ -98,8 +98,9 @@ public class VisionTarget {
 
     public double distance() {
         VisionConfig c = VisionConfig.getInstance();
-        double lengthPix = vertical.length();
-        return VERTICAL_LENGTH_INCHES * c.getImageHeight() / (2 * lengthPix * Math.tan(Math.toDegrees(c.getVerticalFov())));
+        double targetPx = vertical.length();
+        double distance = (VERTICAL_LENGTH_INCHES * (c.getImageHeight() / 2)) / (targetPx * Math.tan(Math.toRadians(c.getVerticalFov())));
+        return distance;
     }
 
     public double azimuth() {

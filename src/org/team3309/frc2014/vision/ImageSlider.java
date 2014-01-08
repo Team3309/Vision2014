@@ -49,7 +49,8 @@ public class ImageSlider extends Container implements ChangeListener {
     }
 
     public void show(Mat mat) {
-        imgLabel.setIcon(new ImageIcon(Util.getBufferedImage(mat)));
+        if (mat != null)
+            imgLabel.setIcon(new ImageIcon(Util.getBufferedImage(mat)));
     }
 
     public int getSlider(int slider) {

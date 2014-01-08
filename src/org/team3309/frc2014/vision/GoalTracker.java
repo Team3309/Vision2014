@@ -19,21 +19,25 @@ public class GoalTracker {
         Mat sat = split.get(1);
         Mat val = split.get(2);
 
+        Mat hueBin = Mat.zeros(hue.size(), CvType.CV_8UC1);
+        Mat satBin = Mat.zeros(val.size(), CvType.CV_8UC1);
+        Mat valBin = Mat.zeros(val.size(), CvType.CV_8UC1);
+
         VisionConfig c = VisionConfig.getInstance();
 
         Mat bin = new Mat(hsv.size(), CvType.CV_8UC1);
 
-        Core.inRange(hue, new Scalar(c.getHueMin()), new Scalar(c.getHueMax()), hue);
-        Core.inRange(sat, new Scalar(c.getSatMin()), new Scalar(c.getSatMax()), sat);
-        Core.inRange(val, new Scalar(c.getValMin()), new Scalar(c.getSatMax()), val);
+        Core.inRange(hue, new Scalar(c.getHueMin()), new Scalar(c.getHueMax()), hueBin);
+        Core.inRange(sat, new Scalar(c.getSatMin()), new Scalar(c.getSatMax()), satBin);
+        Core.inRange(val, new Scalar(c.getValMin()), new Scalar(c.getSatMax()), valBin);
 
-        w.showHue(hue);
-        w.showSat(sat);
-        w.showVal(val);
+        w.showHue(hueBin);
+        w.showSat(satBin);
+        w.showVal(valBin);
 
-        Core.bitwise_or(hue, bin, bin);
-        Core.bitwise_and(sat, bin, bin);
-        Core.bitwise_and(val, bin, bin);
+        Core.bitwise_or(hueBin, bin, bin);
+        Core.bitwise_and(satBin, bin, bin);
+        Core.bitwise_and(valBin, bin, bin);
 
         return bin;
     }
@@ -114,10 +118,10 @@ public class GoalTracker {
 
     private static void drawTarget(Mat img, VisionTarget target) {
         Scalar color = target.isLeft() ? new Scalar(0, 255, 0) : new Scalar(0, 0, 255);
-        int thickness = target.isHot() ? 10 : 5;
+        int thickness = target.isHot() ? 15 : 5;
         drawLine(img, target.getVertical(), thickness, color);
         if (target.getHorizontal() != null)
-            drawLine(img, target.getHorizontal(), thickness, new Scalar(255, 0, 0));
+            drawLine(img, target.getHorizontal(), thickness, color);
     }
 
     public static Goal findGoal(Mat img, CalibrationWindow window) {
