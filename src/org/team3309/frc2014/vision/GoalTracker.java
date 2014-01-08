@@ -186,7 +186,7 @@ public class GoalTracker {
         return null;
     }
 
-    public static VisionTarget findTarget(Mat img, CalibrationWindow window) {
+    public static List<VisionTarget> findTarget(Mat img, CalibrationWindow window) {
         Mat hsv = new Mat(img.size(), CvType.CV_8UC3);
         Imgproc.cvtColor(img, hsv, Imgproc.COLOR_BGR2HSV);
         Mat bin = threshold(hsv, window);
@@ -200,6 +200,7 @@ public class GoalTracker {
         ArrayList<RotatedRect> hBoxes = new ArrayList<RotatedRect>();
         ArrayList<RotatedRect> vBoxes = new ArrayList<RotatedRect>();
 
+        //separate out the horizontal and vertical boxes, ignore everything else
         for (MatOfPoint contour : contours) {
             MatOfPoint2f points2f = new MatOfPoint2f(contour.toArray());
             RotatedRect rect = Imgproc.minAreaRect(points2f);
@@ -218,6 +219,7 @@ public class GoalTracker {
         ArrayList<VisionTarget> targets = new ArrayList<VisionTarget>();
 
         for (RotatedRect vrect : vBoxes) {
+            //find the closest horizontal box to the current vertical box
             RotatedRect closestH = null;
             for (RotatedRect hrect : hBoxes) {
                 if (closestH != null) {
@@ -227,8 +229,12 @@ public class GoalTracker {
                     closestH = hrect;
                 }
             }
+
+            //create a list to store the rectangles that make up the target
             ArrayList<RotatedRect> targetRects = new ArrayList<RotatedRect>();
+            //add the vertical box to the list
             targetRects.add(vrect);
+            //add the closest horizontal box only if it is within a certain distance
             if (closestH != null && Util.distance(vrect.center, closestH.center) < 100)
                 targetRects.add(closestH);
 
@@ -238,6 +244,8 @@ public class GoalTracker {
 
         System.out.println("Found " + targets.size() + " targets");
 
+        //This can override a target as the left target if, for example, the left target is not hot and therefore the
+        //built-in side detection will not work
         if (targets.size() > 1) {
             for (VisionTarget target : targets) {
                 for (VisionTarget otherTarget : targets) {
@@ -248,6 +256,7 @@ public class GoalTracker {
             }
         }
 
+        //display info about the target (on the image and in the target info pane)
         for (VisionTarget target : targets) {
             System.out.println(target);
             window.showTargetInfo(target);
@@ -256,7 +265,7 @@ public class GoalTracker {
 
         window.showResult(img);
 
-        return null;
+        return targets;
     }
 
 }
