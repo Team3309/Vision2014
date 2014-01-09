@@ -276,7 +276,7 @@ public class Tracker {
             //add the closest horizontal box only if it is within a certain distance
             if (closestH != null && Util.distance(vrect.center, closestH.center) < 300)
                 targetRects.add(closestH);
-            else {
+            else if (closestH != null) {
                 System.err.println("Boxes too far away to be part of goal, distance = " + Util.distance(vrect.center, closestH.center));
             }
 
