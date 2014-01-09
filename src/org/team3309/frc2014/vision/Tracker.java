@@ -140,8 +140,7 @@ public class Tracker {
     }
 
     private static void drawTarget(Mat img, VisionTarget target) {
-        Scalar color = target.isLeft() ? new Scalar(0, 255, 0) : new Scalar(0, 0, 255);
-        int thickness = target.isHot() ? 15 : 5;
+        Scalar color = target.isHot() ? new Scalar(0, 255, 0) : new Scalar(0, 0, 255);
         drawRectangle(img, target.getVertical(), color);
         if (target.getHorizontal() != null)
             drawRectangle(img, target.getHorizontal(), color);

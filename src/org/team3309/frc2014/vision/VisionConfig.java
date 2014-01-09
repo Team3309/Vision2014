@@ -24,7 +24,7 @@ public class VisionConfig {
             .satMax(255)
             .valMin(86)
             .valMax(255)
-            .erode(0)
+            .erode(1)
             .dilate(2)
             .build();
 
