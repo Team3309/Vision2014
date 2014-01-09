@@ -148,6 +148,8 @@ public class Tracker {
     }
 
     public static List<Goal> findGoals(Mat img, CalibrationWindow window) {
+        long start = System.currentTimeMillis();
+
         Mat hsv = new Mat(img.size(), CvType.CV_8UC3);
         Imgproc.cvtColor(img, hsv, Imgproc.COLOR_BGR2HSV);
         Mat bin = threshold(hsv, VisionConfig.getInstance().getGoalThreshold(), window);
@@ -198,16 +200,27 @@ public class Tracker {
                 longestH[1] = rect;
         }
 
+        ArrayList<Goal> goals = new ArrayList<Goal>();
+
         for (Rect r : longestH) {
             if (r != null) {
                 drawRectangle(img, r, new Scalar(0, 255, 0));
+                goals.add(new Goal(r));
             }
+        }
+
+        System.out.println("Found " + goals.size() + " goals");
+
+        long end = System.currentTimeMillis();
+
+        if (window != null) {
+            window.setProcessingTime(end - start);
         }
 
         if (window != null)
             window.showResult(img);
 
-        return null;
+        return goals;
     }
 
     public static List<VisionTarget> findTargets(Mat img, CalibrationWindow window) {
@@ -228,7 +241,7 @@ public class Tracker {
         for (MatOfPoint contour : contours) {
             MatOfPoint2f points2f = new MatOfPoint2f(contour.toArray());
             RotatedRect rect = Imgproc.minAreaRect(points2f);
-            if (rect.boundingRect().area() > 75) {
+            if (rect.boundingRect().area() > 150) {
                 if (Util.isHorizontal(rect)) {
                     hBoxes.add(rect);
                 } else if (Util.isVertical(rect)) {
@@ -238,6 +251,9 @@ public class Tracker {
                 }
             }
         }
+
+        //System.out.println("Found " + hBoxes.size() + " horizontal boxes");
+        //System.out.println("Found " + vBoxes.size() + " vertical boxes");
 
         ArrayList<VisionTarget> targets = new ArrayList<VisionTarget>();
 
@@ -258,8 +274,11 @@ public class Tracker {
             //add the vertical box to the list
             targetRects.add(vrect);
             //add the closest horizontal box only if it is within a certain distance
-            if (closestH != null && Util.distance(vrect.center, closestH.center) < 100)
+            if (closestH != null && Util.distance(vrect.center, closestH.center) < 300)
                 targetRects.add(closestH);
+            else {
+                System.err.println("Boxes too far away to be part of goal, distance = " + Util.distance(vrect.center, closestH.center));
+            }
 
             VisionTarget target = VisionTarget.make(targetRects);
             targets.add(target);
@@ -285,14 +304,14 @@ public class Tracker {
             }
         }
 
-        if (window != null)
-            window.showResult(img);
-
         long end = System.currentTimeMillis();
 
         if (window != null) {
             window.setProcessingTime(end - start);
         }
+
+        if (window != null)
+            window.showResult(img);
 
         return targets;
     }
