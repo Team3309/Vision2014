@@ -53,6 +53,13 @@ public class Tracker {
         return bin;
     }
 
+    /**
+     * This method performs an erosion and then a dilation on the specified binary image
+     *
+     * @param bin
+     * @param t
+     * @param w
+     */
     private static void erodeAndDilate(Mat bin, TrackingConfig t, CalibrationWindow w) {
         VisionConfig c = VisionConfig.getInstance();
 
