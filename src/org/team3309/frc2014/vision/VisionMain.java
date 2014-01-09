@@ -1,9 +1,7 @@
 package org.team3309.frc2014.vision;
 
-import org.opencv.core.Mat;
-import org.opencv.core.Size;
+import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
-import org.opencv.imgproc.Imgproc;
 
 /**
  * Created by vmagro on 1/5/14.
@@ -27,7 +25,7 @@ public class VisionMain implements SliderListener {
     public VisionMain() {
         w = CalibrationWindow.getInstance();
         capture = new VideoCapture();
-        capture.open(0);
+        //capture.open(0);
 
         VisionConfig c = VisionConfig.getInstance();
         if (w != null) {
@@ -52,7 +50,7 @@ public class VisionMain implements SliderListener {
             sliderUpdated();
         }
 
-        while (true) {
+        /*while (true) {
             Mat img = new Mat();
             capture.read(img);
             Imgproc.resize(img, img, new Size(640, 480));
@@ -62,7 +60,7 @@ public class VisionMain implements SliderListener {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
 
     }
 
@@ -83,7 +81,7 @@ public class VisionMain implements SliderListener {
         /*List<Goal> goals = Tracker.findGoals(Highgui.imread(imageName), w);
         for(Goal g : goals)
             System.out.println(g);*/
-        //Tracker.findTargets(Highgui.imread(imageName), w);
+        Tracker.findTargets(Highgui.imread(imageName), w);
 
         /*Mat img = new Mat();
         capture.read(img);

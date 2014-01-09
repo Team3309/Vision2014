@@ -229,7 +229,9 @@ public class Tracker {
         Imgproc.cvtColor(img, hsv, Imgproc.COLOR_BGR2HSV);
         Mat bin = threshold(hsv, VisionConfig.getInstance().getVisionTargetThreshold(), window);
 
-        erodeAndDilate(bin, VisionConfig.getInstance().getVisionTargetThreshold(), window);
+        Mat erodeAndDilate = bin.clone();
+        erodeAndDilate(erodeAndDilate, VisionConfig.getInstance().getVisionTargetThreshold(), window);
+        Core.bitwise_and(erodeAndDilate, bin, bin);
 
         List<MatOfPoint> contours = findContours(bin);
 
