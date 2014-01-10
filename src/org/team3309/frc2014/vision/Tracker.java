@@ -154,8 +154,6 @@ public class Tracker {
     }
 
     public static List<Goal> findGoals(Mat img, CalibrationWindow window) {
-        long start = System.currentTimeMillis();
-
         Mat hsv = new Mat(img.size(), CvType.CV_8UC3);
         Imgproc.cvtColor(img, hsv, Imgproc.COLOR_BGR2HSV);
         Mat bin = threshold(hsv, VisionConfig.getInstance().getGoalThreshold(), window);
@@ -217,12 +215,6 @@ public class Tracker {
 
         System.out.println("Found " + goals.size() + " goals");
 
-        long end = System.currentTimeMillis();
-
-        if (window != null) {
-            window.setProcessingTime(end - start);
-        }
-
         if (window != null)
             window.showResult(img);
 
@@ -230,8 +222,6 @@ public class Tracker {
     }
 
     public static List<VisionTarget> findTargets(Mat img, CalibrationWindow window) {
-        long start = System.currentTimeMillis();
-
         Mat hsv = new Mat(img.size(), CvType.CV_8UC3);
         Imgproc.cvtColor(img, hsv, Imgproc.COLOR_BGR2HSV);
         Mat bin = threshold(hsv, VisionConfig.getInstance().getVisionTargetThreshold(), window);
@@ -305,21 +295,16 @@ public class Tracker {
         }
 
         //display info about the target (on the image and in the target info pane)
-        for (VisionTarget target : targets) {
-            if (window != null) {
+        if (window != null) {
+            for (VisionTarget target : targets) {
                 drawTarget(img, target);
                 window.showTargetInfo(target);
             }
         }
 
-        long end = System.currentTimeMillis();
-
         if (window != null) {
-            window.setProcessingTime(end - start);
-        }
-
-        if (window != null)
             window.showResult(img);
+        }
 
         return targets;
     }
