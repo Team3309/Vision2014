@@ -1,5 +1,9 @@
 package org.team3309.frc2014.vision;
 
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.DefaultHandler;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
 
@@ -23,9 +27,28 @@ public class VisionMain implements SliderListener {
     private TrackingConfig currentMode = VisionConfig.getInstance().getVisionTargetThreshold();
 
     public VisionMain() {
-        w = CalibrationWindow.getInstance();
+        //w = CalibrationWindow.getInstance();
         capture = new VideoCapture();
         //capture.open(0);
+
+        Server server = new Server(8080);
+        HandlerList handlers = new HandlerList();
+        handlers.addHandler(new ResultHandler());
+        handlers.addHandler(new ImageHandler());
+        ResourceHandler resourceHandler = new ResourceHandler();
+        resourceHandler.setResourceBase("web");
+        resourceHandler.setDirectoriesListed(true);
+        resourceHandler.setWelcomeFiles(new String[]{"index.html"});
+        handlers.addHandler(resourceHandler);
+        handlers.addHandler(new ConfigHandler());
+        handlers.addHandler(new DefaultHandler());
+
+        server.setHandler(handlers);
+        try {
+            server.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         VisionConfig c = VisionConfig.getInstance();
         if (w != null) {
@@ -49,19 +72,6 @@ public class VisionMain implements SliderListener {
             }
             sliderUpdated();
         }
-
-        /*while (true) {
-            Mat img = new Mat();
-            capture.read(img);
-            Imgproc.resize(img, img, new Size(640, 480));
-            Tracker.findTargets(img, w);
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }*/
-
     }
 
     @Override

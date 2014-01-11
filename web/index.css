@@ -1,0 +1,19 @@
+.target {
+    display: inline-block;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+.target p {
+    margin: 2px;
+    padding: 0px;
+}
+
+.image-pane {
+    float: left;
+    margin-right: 15px;
+}
+
+.targets {
+    float: left;
+}

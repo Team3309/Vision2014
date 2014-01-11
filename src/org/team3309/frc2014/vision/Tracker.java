@@ -11,6 +11,8 @@ import java.util.List;
  */
 public class Tracker {
 
+    public static Mat hue, sat, val, erode, dilate, thresholded, result;
+
     /**
      * This method performs a threshold on the 3 separate channels of an HSV image.
      * Threshold values are retrieved from VisionConfig
@@ -24,9 +26,9 @@ public class Tracker {
         ArrayList<Mat> split = new ArrayList<Mat>();
         Core.split(hsv, split);
 
-        Mat hue = split.get(0);
-        Mat sat = split.get(1);
-        Mat val = split.get(2);
+        hue = split.get(0);
+        sat = split.get(1);
+        val = split.get(2);
 
         Mat hueBin = Mat.zeros(hue.size(), CvType.CV_8UC1);
         Mat satBin = Mat.zeros(val.size(), CvType.CV_8UC1);
@@ -42,6 +44,10 @@ public class Tracker {
         Mat bin = hueBin.clone();
         Core.bitwise_and(satBin, bin, bin);
         Core.bitwise_and(valBin, bin, bin);
+
+        hue = hueBin;
+        sat = satBin;
+        val = valBin;
 
         if (w != null) {
             w.showHue(hueBin);
@@ -69,6 +75,7 @@ public class Tracker {
         // Apply the erosion operation
         // Erosion makes the white parts of the image smaller, which removes some small noise particles
         Imgproc.erode(bin, bin, elementErosion);
+        erode = bin.clone();
         if (w != null)
             w.showErosion(bin);
 
@@ -79,7 +86,7 @@ public class Tracker {
         // Dilation makes the white parts of the image larger, which fixes some irregularities that may
         // have been caused by the erosion operation
         Imgproc.dilate(bin, bin, elementDilation);
-
+        dilate = bin.clone();
         if (w != null)
             w.showDilation(bin);
     }
@@ -215,6 +222,7 @@ public class Tracker {
 
         System.out.println("Found " + goals.size() + " goals");
 
+        result = img;
         if (window != null)
             window.showResult(img);
 
@@ -224,7 +232,8 @@ public class Tracker {
     public static List<VisionTarget> findTargets(Mat img, CalibrationWindow window) {
         Mat hsv = new Mat(img.size(), CvType.CV_8UC3);
         Imgproc.cvtColor(img, hsv, Imgproc.COLOR_BGR2HSV);
-        Mat bin = threshold(hsv, VisionConfig.getInstance().getVisionTargetThreshold(), window);
+        thresholded = threshold(hsv, VisionConfig.getInstance().getVisionTargetThreshold(), window);
+        Mat bin = thresholded.clone();
 
         Mat erodeAndDilate = bin.clone();
         erodeAndDilate(erodeAndDilate, VisionConfig.getInstance().getVisionTargetThreshold(), window);
@@ -294,13 +303,13 @@ public class Tracker {
         }
 
         //display info about the target (on the image and in the target info pane)
-        if (window != null) {
-            for (VisionTarget target : targets) {
-                drawTarget(img, target);
+        for (VisionTarget target : targets) {
+            drawTarget(img, target);
+            if (window != null)
                 window.showTargetInfo(target);
-            }
         }
 
+        result = img;
         if (window != null) {
             window.showResult(img);
         }

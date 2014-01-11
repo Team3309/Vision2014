@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>3309 Vision</title>
+
+    <link rel="stylesheet" href="index.css"/>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"/>
+
+    <script src="jquery-1.10.2.min.js"></script>
+
+    <script src="index.js"></script>
+
+    <script src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+
+</head>
+<body>
+
+<div class="image-pane">
+    <div>Hue</div>
+    <img class="refreshable" id="hue" src="/image/hue"/>
+
+    <div class="image-thresh slider" id="hue-slider"></div>
+</div>
+<div class="image-pane">
+    <div>Sat</div>
+    <img class="refreshable" id="sat" src="/image/sat"/>
+
+    <div class="image-thresh slider" id="sat-slider"></div>
+</div>
+<div class="image-pane">
+    <div>Val</div>
+    <img class="refreshable" id="val" src="/image/val"/>
+
+    <div class="image-thresh slider" id="val-slider"></div>
+</div>
+<div class="image-pane">
+    <div>Threshold</div>
+    <img class="refreshable" id="thresh" src="/image/thresh"/>
+</div>
+
+<div style="clear: both; height: 20px"></div>
+
+<div class="image-pane">
+    <div>Erosion</div>
+    <img class="refreshable" id="erode" src="/image/erode"/>
+</div>
+
+<div class="image-pane">
+    <div>Dilation</div>
+    <img class="refreshable" id="dilate" src="/image/dilate"/>
+</div>
+
+<div class="image-pane">
+    <div>Result</div>
+    <img class="refreshable" id="result" src="/image/result"/>
+</div>
+
+<div id="targets">
+    <div class="target" id="target-left">
+        <p style="margin-bottom: 10px">Left target</p>
+
+        <p class="distance"></p>
+
+        <p class="hot"></p>
+
+        <p class="azimuth"></p>
+    </div>
+    <div class="target" id="target-right">
+        <p style="margin-bottom: 10px">Right target</p>
+
+        <p class="distance"></p>
+
+        <p class="hot"></p>
+
+        <p class="azimuth"></p>
+    </div>
+</div>
+
+</body>
+</html>
