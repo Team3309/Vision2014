@@ -5,7 +5,8 @@ import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.opencv.highgui.Highgui;
-import org.opencv.highgui.VideoCapture;
+
+import java.net.URL;
 
 /**
  * Created by vmagro on 1/5/14.
@@ -20,15 +21,12 @@ public class VisionMain implements SliderListener {
 
     private CalibrationWindow w;
 
-    private VideoCapture capture;
-
     private String imageName = "image_one_third.jpg";
 
     private TrackingConfig currentMode = VisionConfig.getInstance().getVisionTargetThreshold();
 
     public VisionMain() {
         //w = CalibrationWindow.getInstance();
-        capture = new VideoCapture();
         //capture.open(0);
 
         Server server = new Server(8080);
@@ -72,6 +70,20 @@ public class VisionMain implements SliderListener {
             }
             sliderUpdated();
         }
+
+
+        if (w != null) {
+            try {
+                URL imageUrl = new URL("http://192.168.0.120/image/jpeg.cgi");
+                while (true) {
+                    Tracker.findTargets(Util.loadImage(imageUrl), w);
+                    Thread.sleep(33);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
     }
 
     @Override

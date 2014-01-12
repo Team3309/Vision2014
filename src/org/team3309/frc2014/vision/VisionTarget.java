@@ -92,8 +92,11 @@ public class VisionTarget {
     public double azimuth() {
         VisionConfig c = VisionConfig.getInstance();
         double dist = distance();
-        //TODO actually compute stuff here
-        return 0;
+        double targetPx = vertical.boundingRect().height > vertical.boundingRect().width ?
+                vertical.boundingRect().height : vertical.boundingRect().width;
+        double pixToIn = VERTICAL_LENGTH_INCHES / targetPx;
+        double distFromCenter = (vertical.boundingRect().tl().x - (c.getImageWidth() / 2)) * pixToIn;
+        return Math.atan2(dist, distFromCenter);
     }
 
     public void overrideLeft() {

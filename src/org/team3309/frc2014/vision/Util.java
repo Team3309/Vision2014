@@ -9,7 +9,10 @@ import org.opencv.highgui.Highgui;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 
 public class Util {
 
@@ -52,6 +55,20 @@ public class Util {
         if (angle < ANGLE_THRESHOLD || Math.abs(angle - 90) < ANGLE_THRESHOLD)
             return r.boundingRect().height > r.boundingRect().width;
         else return false;
+    }
+
+    public static Mat loadImage(URL url) {
+        try {
+            URLConnection connection = url.openConnection();
+            BufferedImage bufferedImage = ImageIO.read(connection.getInputStream());
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(bufferedImage, "jpg", baos);
+            MatOfByte matOfByte = new MatOfByte(baos.toByteArray());
+            return Highgui.imdecode(matOfByte, Highgui.CV_LOAD_IMAGE_ANYCOLOR);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
 
 }
