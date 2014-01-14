@@ -5,6 +5,7 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.opencv.core.Mat;
+import org.opencv.highgui.Highgui;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -41,8 +42,8 @@ public class ResultHandler extends AbstractHandler {
             response.setStatus(HttpServletResponse.SC_OK);
             baseRequest.setHandled(true);
 
-            Mat img = Util.loadImage(imageUrl);
-            //Mat img = Highgui.imread("image_one_third.jpg");
+            //Mat img = Util.loadImage(imageUrl);
+            Mat img = Highgui.imread("image_one_third.jpg");
 
             long start = System.currentTimeMillis();
 
