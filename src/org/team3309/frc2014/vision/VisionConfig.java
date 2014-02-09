@@ -40,9 +40,11 @@ public class VisionConfig {
             .dilate(3)
             .build();
 
-    //TODO find real values for these
-    private double verticalFov = 14.24;
-    private double horizontalFov = 37;
+    //values from DCS 930L Datasheet
+    //http://www.dlink.com/-/media/Consumer_Products/DCS/DCS%20930L/Datasheet/DCS%20930L_Datasheet_EN_US.pdf
+    private double verticalFov = 34.5;
+    private double horizontalFov = 45.3;
+    private double diagonalFov = 54.9; //probably won't be used
 
     private VisionConfig() {
 
