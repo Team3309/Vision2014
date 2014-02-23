@@ -4,7 +4,11 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
+import java.net.*;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
 import org.opencv.highgui.Highgui;
+import org.opencv.highgui.VideoCapture;
 
 /**
  * Created by vmagro on 1/5/14.
@@ -16,7 +20,6 @@ public class VisionMain implements SliderListener {
 
         new VisionMain();
     }
-
     private CalibrationWindow w;
 
     private String imageName = "image_one_third.jpg";
@@ -24,7 +27,8 @@ public class VisionMain implements SliderListener {
     private TrackingConfig currentMode = VisionConfig.getInstance().getVisionTargetThreshold();
 
     public VisionMain() {
-        //w = CalibrationWindow.getInstance();
+        w = CalibrationWindow.getInstance();
+
 
         Server server = new Server(8080);
         HandlerList handlers = new HandlerList();
@@ -65,22 +69,36 @@ public class VisionMain implements SliderListener {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            sliderUpdated();
         }
 
-        if (w != null) {
-            /*try {
-                URL imageUrl = new URL("http://192.168.0.120/image/jpeg.cgi");
-                while (true) {
-                    Tracker.findTargets(Util.loadImage(imageUrl), w);
-                    Thread.sleep(33);
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }*/
-            Tracker.findTargets(Highgui.imread(imageName), w);
+        //sliderUpdated();
+
+        try {
+            URL imageUrl = new URL("http://10.33.9.121:80/image/jpeg.cgi");
+            while (true) {
+                Tracker.findTargets(Util.loadImage(imageUrl), w);
+                Thread.sleep(33);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
+/*        try {
+
+            VideoCapture cam = new VideoCapture(0);
+            int width = (int) cam.get(Highgui.CV_CAP_PROP_FRAME_WIDTH);
+            int height = (int) cam.get(Highgui.CV_CAP_PROP_FRAME_HEIGHT);
+
+            while (cam.grab()) {
+
+                Mat frame = new Mat(width, height, CvType.CV_32FC3);
+                cam.retrieve(frame);
+                Tracker.findTargets(frame, w);
+                Thread.sleep(33);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }*/
     }
 
     @Override
@@ -97,10 +115,15 @@ public class VisionMain implements SliderListener {
 
         System.out.println(currentMode);
 
+
+
         /*List<Goal> goals = Tracker.findGoals(Highgui.imread(imageName), w);
         for(Goal g : goals)
             System.out.println(g);*/
-        Tracker.findTargets(Highgui.imread(imageName), w);
+
+
+
+        //Tracker.findTargets(Highgui.imread(imageName), w);
 
         /*Mat img = new Mat();
         capture.read(img);

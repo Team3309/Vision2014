@@ -5,10 +5,10 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="IDEA IC-133.696" jdkType="IDEA JDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="org.eclipse.jetty:jetty-server:9.0.1.v20130408" level="project" />
-    <orderEntry type="library" name="org.json:json:20131018" level="project" />
+    <orderEntry type="library" name="org.eclipse.jetty:jetty-server:9.0.1.v201304081" level="project" />
+    <orderEntry type="library" name="org.json:json:201310181" level="project" />
     <orderEntry type="library" name="opencv-248" level="project" />
   </component>
 </module>

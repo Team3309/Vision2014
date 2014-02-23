@@ -11,6 +11,7 @@ import java.util.List;
 public class VisionTarget {
 
     public static final double VERTICAL_LENGTH_INCHES = 32;
+    public static final double HORIZONTAL_LENGTH_INCHES = 23.5;
 
     private RotatedRect vertical;
     private RotatedRect horizontal;
@@ -80,6 +81,7 @@ public class VisionTarget {
         return vertical;
     }
 
+/*
     public double distance() {
         VisionConfig c = VisionConfig.getInstance();
         //the longer dimension is the height, so let's make sure that we get the longer dimension here
@@ -88,8 +90,18 @@ public class VisionTarget {
         double distance = (VERTICAL_LENGTH_INCHES * (c.getImageHeight() / 2)) / (targetPx * Math.tan(Math.toRadians(c.getVerticalFov())));
         return distance;
     }
+*/
+    public double distance() {
+        VisionConfig c = VisionConfig.getInstance();
+    //the longer dimension is the height, so let's make sure that we get the longer dimension here
+        double targetPx = vertical.boundingRect().height > vertical.boundingRect().width ?
+            vertical.boundingRect().height : vertical.boundingRect().width;
+        double frameLength = (VERTICAL_LENGTH_INCHES/targetPx)*c.getImageHeight();
+        double distance = frameLength/(2*Math.tan((c.getVerticalFov()/2)*(Math.PI/180)));
+        return distance;
+    }
 
-    public double azimuth() {
+/*    public double azimuth() {
         VisionConfig c = VisionConfig.getInstance();
         double dist = distance();
         double targetPx = vertical.boundingRect().height > vertical.boundingRect().width ?
@@ -97,6 +109,28 @@ public class VisionTarget {
         double pixToIn = VERTICAL_LENGTH_INCHES / targetPx;
         double distFromCenter = (vertical.boundingRect().tl().x - (c.getImageWidth() / 2)) * pixToIn;
         return Math.atan2(dist, distFromCenter);
+    }*/
+
+    public double azimuth() {
+        double targetAngle = 9999;
+        double horizontalPx = 0;
+        VisionConfig c = VisionConfig.getInstance();
+        double verticalPx = vertical.boundingRect().height > vertical.boundingRect().width ?
+                vertical.boundingRect().height : vertical.boundingRect().width;
+
+        if(horizontal != null)
+        {
+            horizontalPx = horizontal.boundingRect().width > horizontal.boundingRect().height ?
+                horizontal.boundingRect().width : horizontal.boundingRect().height;
+        }
+
+        if((horizontalPx != 0) && (verticalPx != 0))
+        {
+            double expectedHorizontalPx = verticalPx*HORIZONTAL_LENGTH_INCHES/VERTICAL_LENGTH_INCHES;
+            targetAngle = Math.acos(horizontalPx/expectedHorizontalPx)*(180/Math.PI);
+
+        }
+        return targetAngle;
     }
 
     public void overrideLeft() {
